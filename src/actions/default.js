@@ -5,6 +5,7 @@ const Actions = (props) => {
   const {
     selectedItems,
     isFolder,
+    isClass,
     icons,
     nameFilter,
 
@@ -34,6 +35,7 @@ const Actions = (props) => {
   /** @type any */
   let actions = []
 
+  console.error("Action Buttons:", props, selectedItems);
   if (selectedItems.length) {
     // Something is selected. Build custom actions depending on what it is.
     const selectedItemsAction = selectedItems.filter(item => item.action)
@@ -61,7 +63,7 @@ const Actions = (props) => {
         </div>
       )
     } else {
-      if (isFolder && canCreateFolder && !nameFilter) {
+      if (isFolder && !isClass && canCreateFolder && !nameFilter) {
         actions.push(
           <li key="action-add-folder">
             <a
@@ -69,7 +71,7 @@ const Actions = (props) => {
               href="#"
               role="button"
             >
-              {icons.Folder}
+              {icons.FolderAction ? icons.FolderAction : icons.Folder}
               &nbsp;Add Subfolder
             </a>
           </li>
@@ -105,7 +107,7 @@ const Actions = (props) => {
         )
       }
 
-      if (!itemsWithoutKeyDerived && !isFolder && canDeleteFile) {
+      if (!itemsWithoutKeyDerived && !isFolder && canDeleteFile && selectedItems.length > 1) {
         actions.push(
           <li key="action-delete">
             <a
@@ -118,7 +120,7 @@ const Actions = (props) => {
             </a>
           </li>
         )
-      } else if (!itemsWithoutKeyDerived && isFolder && canDeleteFolder) {
+      } else if (!itemsWithoutKeyDerived && isFolder && canDeleteFolder && selectedItems.length > 1) {
         actions.push(
           <li key="action-delete">
             <a
@@ -164,7 +166,7 @@ const Actions = (props) => {
             href="#"
             role="button"
           >
-            {icons.Folder}
+            {icons.FolderAction ? icons.FolderAction : icons.Folder}
             &nbsp;Add Folder
           </a>
         </li>
@@ -184,6 +186,7 @@ const Actions = (props) => {
 Actions.propTypes = {
   selectedItems: PropTypes.arrayOf(PropTypes.object),
   isFolder: PropTypes.bool,
+  isClass: PropTypes.bool,
   icons: PropTypes.object,
   nameFilter: PropTypes.string,
 
@@ -212,6 +215,7 @@ Actions.propTypes = {
 Actions.defaultProps = {
   selectedItems: [],
   isFolder: false,
+  isClass: false,
   icons: {},
   nameFilter: '',
 
