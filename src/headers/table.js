@@ -17,6 +17,8 @@ class RawTableHeader extends React.Component {
     isSelected: PropTypes.func,
 
     browserProps: PropTypes.shape({
+      columns: PropTypes.arrayOf(PropTypes.string),
+      headers: PropTypes.element,
       createFiles: PropTypes.func,
       moveFolder: PropTypes.func,
       moveFile: PropTypes.func,
@@ -35,9 +37,26 @@ class RawTableHeader extends React.Component {
           selected: this.props.isSelected,
         })}
       >
+        {(this.props.browserProps.columns && this.props.browserProps.headers) ? 
+        <>
+        {/*this.props.browserProps.columns.map(row => (
+          <th className={row}>{this.props.browserProps.headers[row].name}</th>
+        ))*/}
+        {Object.entries(this.props.browserProps.headers).map( ([key, ch]) => {
+          if (!ch.isHidden) {
+          return (
+            <th className={key}>{ch.name}</th>
+            )
+          }
+        })}
+        </>
+        :
+        <>
         <th>File</th>
         <th className="size">Size</th>
         <th className="modified">Last Modified</th>
+        </>
+        }
       </tr>
     )
 
