@@ -71,6 +71,8 @@ class BaseFile extends React.Component {
       extension: this.getExtension(),
     })
   }
+
+  // Handle multiple buttons on the table row.
   handleItemClick = (event) => {
     console.log("handleItemClick:", this.props, event.target);
     if (event.target) {
@@ -205,6 +207,8 @@ class BaseFile extends React.Component {
     ) {
       render = this.props.connectDragSource(render)
     }
+
+    // Student files cannot be drop targets.
     if (
       (typeof this.props.browserProps.createFiles === 'function' ||
        typeof this.props.browserProps.moveFile === 'function' ||
