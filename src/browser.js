@@ -146,10 +146,14 @@ class RawFileBrowser extends React.Component {
     files: PropTypes.arrayOf(PropTypes.shape({
       key: PropTypes.string.isRequired,
       modified: PropTypes.number,
-      size: PropTypes.number,
+      size: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     })).isRequired,
     columns: PropTypes.arrayOf(PropTypes.string),
-    headers: PropTypes.element,
+    headers: PropTypes.shape({
+      file: PropTypes.shape({name: PropTypes.string}),
+      size: PropTypes.shape({name: PropTypes.string}),
+      modified: PropTypes.shape({name: PropTypes.string}),
+    }),
     actions: PropTypes.node,
     showActionBar: PropTypes.bool.isRequired,
     canFilter: PropTypes.bool.isRequired,

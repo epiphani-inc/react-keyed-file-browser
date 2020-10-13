@@ -18,7 +18,11 @@ class RawTableHeader extends React.Component {
 
     browserProps: PropTypes.shape({
       columns: PropTypes.arrayOf(PropTypes.string),
-      headers: PropTypes.element,
+      headers: PropTypes.shape({
+        file: PropTypes.shape({name: PropTypes.string}),
+        size: PropTypes.shape({name: PropTypes.string}),
+        modified: PropTypes.shape({name: PropTypes.string}),
+      }),
       createFiles: PropTypes.func,
       moveFolder: PropTypes.func,
       moveFile: PropTypes.func,
