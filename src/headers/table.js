@@ -45,7 +45,7 @@ class RawTableHeader extends React.Component {
         {Object.entries(this.props.browserProps.headers).map( ([key, ch]) => {
           if (!ch.isHidden) {
           return (
-            <th className={key}>{ch.name}</th>
+            <th key={key} className={key}>{ch.name}</th>
             )
           }
         })}
