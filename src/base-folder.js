@@ -13,6 +13,7 @@ class BaseFolder extends React.Component {
     isDraft: PropTypes.bool,
     isRenaming: PropTypes.bool,
     isDeleting: PropTypes.bool,
+    isClass: PropTypes.bool,
 
     connectDragSource: PropTypes.func,
     connectDropTarget: PropTypes.func,
@@ -57,6 +58,7 @@ class BaseFolder extends React.Component {
 
   handleFolderClick = (event) => {
     event.stopPropagation()
+    console.log("handleFolderClick:", this.props, this.props.browserProps.select);
     this.props.browserProps.select(this.props.fileKey, 'folder', event.ctrlKey || event.metaKey, event.shiftKey)
   }
   handleFolderDoubleClick = (event) => {
@@ -117,12 +119,32 @@ class BaseFolder extends React.Component {
     }
     this.props.browserProps.beginAction('delete', this.props.fileKey)
   }
+
   handleDeleteSubmit = (event) => {
     event.preventDefault()
+    console.log("handleDeleteSubmit:", event, this.props);
     if (!this.props.browserProps.deleteFolder) {
       return
     }
-    this.props.browserProps.deleteFolder(this.props.browserProps.actionTargets)
+    this.props.browserProps.deleteFolder([this.props.fileKey])
+  }
+
+  handleViewSubmit = (event) => {
+    event.preventDefault()
+    console.log("handleViewSubmit:", event, this.props);
+    if (!this.props.browserProps.viewFolder) {
+      return
+    }
+    this.props.browserProps.viewFolder([this.props.fileKey])
+  }
+
+  handleRefreshSubmit = (event) => {
+    event.preventDefault()
+    console.log("handleRefreshSubmit:", event, this.props);
+    if (!this.props.browserProps.refreshFolder) {
+      return
+    }
+    this.props.browserProps.refreshFolder([this.props.fileKey])
   }
 
   handleCancelEdit = (event) => {
@@ -145,9 +167,10 @@ class BaseFolder extends React.Component {
         render = this.props.connectDragSource(render)
       }
       if (
-        typeof this.props.browserProps.createFiles === 'function' ||
-        typeof this.props.browserProps.moveFolder === 'function' ||
-        typeof this.props.browserProps.moveFile === 'function'
+        (typeof this.props.browserProps.createFiles === 'function' ||
+         typeof this.props.browserProps.moveFolder === 'function' ||
+         typeof this.props.browserProps.moveFile === 'function') &&
+        (!(this.props.isClass))
       ) {
         render = this.props.connectDropTarget(render)
       }
