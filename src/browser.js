@@ -20,20 +20,146 @@ import { SortByName } from './sorters'
 
 import { isFolder } from './utils'
 import { DefaultAction } from './actions'
+import { fileSize } from './files/utils'
 
 const SEARCH_RESULTS_PER_PAGE = 20
 const regexForNewFolderOrFileSelection = /.*\/__new__[/]?$/gm
 
+var filterMap = {};
+var gNameFilter = "";
+
+function cleanupSlash(key) {
+  let a = key;
+  if (a[a.length - 1] === '/') {
+      a = a.slice(0, -1);
+  }
+
+  return a;
+}
+
+function getLastPath(path) {
+  // this regex takes out the path and only gives the last folder/file name
+  // For e.g: "hello/world/foo" would return just "foo"
+  return cleanupSlash(path).replace(/\/?(.*)\//, "");
+}
+
+function getParentPath(path) {
+  // this regex takes out the last path and returns only remaining path
+  // For e.g: "hello/world/foo" would return just "hello/world"
+  // as the parent path
+  return path.replace(/\/?[^/]+\/?$/, "");
+}
+
+// "cehckList" (selected items) has path strings for folders
+// and file objects for files now, so we cannot do a simple
+// "includes" check any more.
+function isItemInList(file, checkList) {
+  let foundItem = false;
+  //console.log("isItemInList:", file, checkList);
+  for (let idx in checkList) {
+    let curSel = checkList[idx];
+    if (typeof curSel === "string") {
+      //console.log("isItemInList: string match")
+      foundItem = (curSel === file.key) ? true : false;
+      if (foundItem) break;
+    } else if (curSel.id === file.id) {
+      //console.log("isItemInList: id match")
+      foundItem = true;
+      break;
+    }
+  }
+
+  return foundItem;
+}
+
+// Show file only if parent folder is open
+function showFile(fname, browserProps) {
+  let pname = cleanupSlash(fname);
+  pname = getParentPath(pname);
+  let showFile;
+
+  if (pname) {
+    pname = pname + "/"
+    showFile = pname in browserProps.openFolders
+  } else {
+    // This file is in the root folder, so always send true to show it
+    showFile = true;
+  }
+
+  console.log("showFile:", fname, showFile);
+  return showFile;
+}
+
+function filterFile(file, terms) {
+  if (file.key in filterMap) {
+    console.error(`filterFile: Found ${file.key} in filterMap`, filterMap[file.key])
+    return filterMap[file.key];
+  }
+  let skip = false
+  let cf = file.key.toLowerCase().trim();
+  if (!isFolder(file)) cf = getLastPath(cf);
+  terms.map((term) => {
+    if (cf.indexOf(term) === -1) {
+      skip = true
+    }
+  })
+  if (!skip) console.log("filterFile: found match:", cf, file, terms);
+  return skip;
+}
+
+function filterMatchesDescendants(file, terms) {
+  if (!(gNameFilter)) return true;
+  if (isFolder(file)) {
+    filterMap[file.key] = false;
+    return false;
+  }
+  //const terms = gNameFilter.toLowerCase().split(' ')
+  let skip = filterFile(file, terms);
+  if (!skip) {
+    filterMap[file.key] = skip;
+    return skip;
+  }
+
+  if (file.children) {
+    file.children.map((child) => {
+      if (child.isStudent) return true;
+      let cSkip = filterMatchesDescendants(child, terms);
+      if (!cSkip) {
+        filterMap[child.key] = cSkip;
+        return cSkip;
+      }
+    })
+  }
+
+  filterMap[file.key] = true;
+  return true;
+}
+
+/*function getOpenState(file, browserProps) {
+  //let isOpen = false;
+  if (!isFolder(file)) return false;
+  if (gNameFilter && file.isClass) return false;
+
+  if (file.key in browserProps.openFolders) return true;
+  let skip = filterMatchesDescendants(file);
+  if (!skip) return true;
+  return false;
+  //return isOpen;
+}*/
+
 function getItemProps(file, browserProps) {
-  return {
-    key: `file-${file.key}`,
+  var retVal = {
+    key: file.id ? `${file.id}` : `file-${file.key}`,
     fileKey: file.key,
-    isSelected: (browserProps.selection.includes(file.key)),
-    isOpen: file.key in browserProps.openFolders || browserProps.nameFilter,
-    isRenaming: browserProps.activeAction === 'rename' && browserProps.actionTargets.includes(file.key),
-    isDeleting: browserProps.activeAction === 'delete' && browserProps.actionTargets.includes(file.key),
+    isSelected: (isItemInList(file, browserProps.selection)),
+    //isOpen: getOpenState(file, browserProps),
+    isOpen: file.key in browserProps.openFolders,
+    isRenaming: browserProps.activeAction === 'rename' && isItemInList(file, browserProps.actionTargets),
+    isDeleting: browserProps.activeAction === 'delete' && isItemInList(file, browserProps.actionTargets),
     isDraft: !!file.draft,
   }
+  //console.log("getItemProps:", file, retVal);
+  return retVal;
 }
 
 class RawFileBrowser extends React.Component {
@@ -43,6 +169,8 @@ class RawFileBrowser extends React.Component {
       modified: PropTypes.number,
       size: PropTypes.number,
     })).isRequired,
+    columns: PropTypes.arrayOf(PropTypes.string),
+    headers: PropTypes.element,
     actions: PropTypes.node,
     showActionBar: PropTypes.bool.isRequired,
     canFilter: PropTypes.bool.isRequired,
@@ -277,7 +405,52 @@ class RawFileBrowser extends React.Component {
     })
   }
 
+  viewFile = (keys) => {
+    console.error("viewFile:", keys);
+    this.setState({
+      activeAction: null,
+      actionTargets: [],
+      selection: [],
+    }, () => {
+      this.props.onViewFile(keys)
+    })
+  }
+
+  viewFolder = (key) => {
+    console.log()
+    this.setState({
+      activeAction: null,
+      actionTargets: [],
+      selection: [],
+    }, () => {
+      this.props.onViewFolder(key)
+    })
+  }
+
+  refreshFile = (keys) => {
+    console.error("refreshFile:", keys);
+    this.setState({
+      activeAction: null,
+      actionTargets: [],
+      selection: [],
+    }, () => {
+      this.props.onRefreshFile(keys)
+    })
+  }
+
+  refreshFolder = (key) => {
+    this.setState({
+      activeAction: null,
+      actionTargets: [],
+      selection: [],
+    }, () => {
+      this.props.onRefreshFolder(key)
+    })
+  }
+
+
   deleteFile = (keys) => {
+    console.error("deleteFile:", keys);
     this.setState({
       activeAction: null,
       actionTargets: [],
@@ -434,10 +607,12 @@ class RawFileBrowser extends React.Component {
   }
   handleActionBarRenameClick = (event) => {
     event.preventDefault()
+    console.log("handleActionBarRenameClick", this.state.selection);
     this.beginAction('rename', this.state.selection)
   }
   handleActionBarDeleteClick = (event) => {
     event.preventDefault()
+    console.log("handleActionBarDeleteClick", this.state.selection);
     this.beginAction('delete', this.state.selection)
   }
   handleActionBarAddFolderClick = (event) => {
@@ -485,6 +660,8 @@ class RawFileBrowser extends React.Component {
   }
 
   updateFilter = (newValue) => {
+    filterMap = {};
+    gNameFilter = newValue.trim();
     this.setState({
       nameFilter: newValue,
       searchResultsShown: SEARCH_RESULTS_PER_PAGE,
@@ -502,6 +679,10 @@ class RawFileBrowser extends React.Component {
       confirmDeletionRenderer: this.props.confirmDeletionRenderer,
       confirmMultipleDeletionRenderer: this.props.confirmMultipleDeletionRenderer,
       icons: this.props.icons,
+
+      // extra config
+      columns: this.props.columns,
+      headers: this.props.headers,
 
       // browser state
       openFolders: this.state.openFolders,
@@ -527,6 +708,10 @@ class RawFileBrowser extends React.Component {
       moveFolder: this.props.onMoveFolder ? this.moveFolder : undefined,
       deleteFile: this.props.onDeleteFile ? this.deleteFile : undefined,
       deleteFolder: this.props.onDeleteFolder ? this.deleteFolder : undefined,
+      viewFile: this.props.onViewFile ? this.viewFile : undefined,
+      viewFolder: this.props.onViewFolder ? this.viewFolder : undefined,
+      refreshFile: this.props.onRefreshFile ? this.refreshFile : undefined,
+      refreshFolder: this.props.onRefreshFolder ? this.refreshFolder : undefined,
 
       getItemProps: getItemProps,
     }
@@ -543,6 +728,7 @@ class RawFileBrowser extends React.Component {
     } = this.props
     const browserProps = this.getBrowserProps()
     const selectionIsFolder = (selectedItems.length === 1 && isFolder(selectedItems[0]))
+    const isClass = (selectedItems.length === 1 && selectedItems[0].isClass)
     let filter
     if (canFilter) {
       filter = (
@@ -560,6 +746,7 @@ class RawFileBrowser extends React.Component {
 
         selectedItems={selectedItems}
         isFolder={selectionIsFolder}
+        isClass={isClass}
 
         icons={icons}
         nameFilter={this.state.nameFilter}
@@ -606,7 +793,7 @@ class RawFileBrowser extends React.Component {
     files.map((file) => {
       const thisItemProps = {
         ...browserProps.getItemProps(file, browserProps),
-        depth: this.state.nameFilter ? 0 : depth,
+        depth: depth,
       }
 
       if (!isFolder(file)) {
@@ -626,6 +813,7 @@ class RawFileBrowser extends React.Component {
               {...thisItemProps}
               browserProps={browserProps}
               {...folderRendererProps}
+              onDeleteFolder={this.handleActionBarDeleteClick}
             />
           )
         }
@@ -638,12 +826,14 @@ class RawFileBrowser extends React.Component {
   }
 
   handleMultipleDeleteSubmit = () => {
-    console.log(this)
-    this.deleteFolder(this.state.selection.filter(selection => selection[selection.length - 1] === '/'))
-    this.deleteFile(this.state.selection.filter(selection => selection[selection.length - 1] !== '/'))
+    console.log("handleMultipleDeleteSubmit:", this)
+    this.deleteFolder(this.state.selection.filter(selection => typeof selection === "string"))
+    this.deleteFile(this.state.selection.filter(selection => typeof selection !== "string"))
   }
 
   getFiles() {
+    console.log("getFiles:", this.props.files);
+    const browserProps = this.getBrowserProps();
     let files = this.props.files.concat([])
     if (this.state.activeAction === 'createFolder') {
       files.push({
@@ -656,13 +846,18 @@ class RawFileBrowser extends React.Component {
       const filteredFiles = []
       const terms = this.state.nameFilter.toLowerCase().split(' ')
       files.map((file) => {
-        let skip = false
-        terms.map((term) => {
-          if (file.key.toLowerCase().trim().indexOf(term) === -1) {
-            skip = true
-          }
-        })
-        if (skip) {
+        /*if (isFolder(file) && !file.isClass) {
+          filteredFiles.push(file);
+          return;
+        }*/
+        let skip = filterMatchesDescendants(file, terms);
+        if (skip && !isFolder(file)) {
+          return
+        }
+        if (isFolder(file)) {
+          console.log("filterMatchesDescendants:", file.key, "skip:", skip);
+        }
+        if (!showFile(file.key, browserProps)) {
           return
         }
         filteredFiles.push(file)
@@ -683,14 +878,35 @@ class RawFileBrowser extends React.Component {
     if (typeof this.props.sort === 'function') {
       files = this.props.sort(files)
     }
+    console.log("getFiles: returned files:", files);
     return files
   }
 
   getSelectedItems(files) {
     const { selection } = this.state
+    //console.error("getSelectedItem:", files, selection);
     const selectedItems = []
+    const internalIsItemSelected = (item) => {
+      let foundItem = false;
+      //console.log("internalIsItemSelected:", item);
+      for (let idx in selection) {
+        let curSel = selection[idx];
+        if (typeof curSel === "string") {
+          //console.log("internalIsItemSelected: string match")
+          foundItem = (curSel === item.key) ? true : false;
+          if (foundItem) break;
+        } else if (curSel.id === item.id) {
+          //console.log("internalIsItemSelected: id match")
+          foundItem = true;
+          break;
+        }
+      }
+
+      return foundItem;
+    }
+      
     const findSelected = (item) => {
-      if (selection.includes(item.key)) {
+      if (internalIsItemSelected(item)) {
         selectedItems.push(item)
       }
       if (item.children) {
@@ -712,10 +928,12 @@ class RawFileBrowser extends React.Component {
 
     const files = this.getFiles()
     const selectedItems = this.getSelectedItems(files)
+    console.log("curSelectedItems:", selectedItems);
 
     let header
     /** @type any */
     let contents = this.renderFiles(files, 0)
+    console.log("FileBrowser render:", contents);
     switch (this.props.renderStyle) {
       case 'table':
         if (!contents.length) {
@@ -758,6 +976,7 @@ class RawFileBrowser extends React.Component {
         }
 
         if (this.props.headerRenderer) {
+          //console.log("headerRenderer:", headerProps, this.props.headerRendererProps);
           header = (
             <thead>
               <this.props.headerRenderer
