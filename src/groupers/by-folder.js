@@ -37,13 +37,24 @@ export default function(files, root) {
     })
   })
 
+  function childIsStudent(childArr) {
+    for (let idx in childArr) {
+//WORKING      if ((childArr[idx].id) && (childArr[idx].id.indexOf("|") >= 0)) {
+      if (childArr[idx].isStudent) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   function addAllChildren(level, prefix) {
     if (prefix !== '') {
       prefix += '/'
     }
     let files = []
     for (const folder in level.children) {
-      files.push({
+      const tmpFile = {
         ...level.children[folder],
         contents: undefined,
         keyDerived: true,
@@ -51,7 +62,13 @@ export default function(files, root) {
         relativeKey: prefix + folder + '/',
         children: addAllChildren(level.children[folder], prefix + folder),
         size: 0,
-      })
+      }
+
+      if (childIsStudent(tmpFile.children)) {
+        tmpFile['isClass'] = true;
+      }
+
+      files.push(tmpFile)
     }
     files = files.concat(level.contents)
     return files
