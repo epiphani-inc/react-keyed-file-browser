@@ -12,11 +12,15 @@ class RawTableFile extends BaseFile {
     const {
       isDragging, isDeleting, isRenaming, isOver, isSelected,
       action, url, browserProps, connectDragPreview,
-      depth, size, modified,
+      depth, size, modified, expire, isDraggable
     } = this.props
 
-    const icon = browserProps.icons[this.getFileType()] || browserProps.icons.File
+    let icon = browserProps.icons[this.getFileType()] || browserProps.icons.File
     const inAction = (isDragging || action)
+
+    if (this.props.isStudent) {
+      icon = browserProps.icons.StudentFile;
+    }
 
     const ConfirmDeletionRenderer = browserProps.confirmDeletionRenderer
 
@@ -59,12 +63,14 @@ class RawTableFile extends BaseFile {
       )
     }
 
+    //console.log("RawTableFile: isDraggable", isDraggable, this.props);
     let draggable = (
       <div>
         {name}
       </div>
     )
-    if (typeof browserProps.moveFile === 'function') {
+    // if (typeof browserProps.moveFile === 'function') {
+    if ((typeof browserProps.moveFile === 'function') && (isDraggable)) {
       draggable = connectDragPreview(draggable)
     }
 
@@ -78,6 +84,7 @@ class RawTableFile extends BaseFile {
         })}
         onClick={this.handleItemClick}
         onDoubleClick={this.handleItemDoubleClick}
+        draggable={isDraggable ? "true" : "false"}
       >
         <td className="name">
           <div style={{ paddingLeft: (depth * 16) + 'px' }}>
@@ -88,8 +95,44 @@ class RawTableFile extends BaseFile {
         <td className="modified">
           {typeof modified === 'undefined' ? '-' : formatDistanceToNow(modified, { addSuffix: true })}
         </td>
+        <td className="modified">
+          {typeof expire === 'undefined' ? '-' : formatDistanceToNow(expire, { addSuffix: true })}
+        </td>
+        {(browserProps.selection.length <= 1) ?
+          <td>
+            <a
+              onClick={this.handleRefreshSubmit}
+              href="#"
+              role="button"
+            >
+              {browserProps.icons.Refresh}
+            </a>
+            &nbsp;&nbsp;&nbsp;
+            <a
+              onClick={this.handleViewSubmit}
+              href="#"
+              role="button"
+            >
+              {browserProps.icons.View}
+            </a>
+            &nbsp;&nbsp;&nbsp;
+            <a
+              onClick={this.handleDeleteSubmit}
+              href="#"
+              role="button"
+            >
+              {browserProps.icons.Delete}
+            </a>
+          </td> :
+          <td />
+        }
       </tr>
     )
+
+    if (!(isDraggable)) {
+      // return row such that we do not make it draggable below
+      return row;
+    }
 
     return this.connectDND(row)
   }
