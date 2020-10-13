@@ -78,8 +78,11 @@ class BaseFile extends React.Component {
     if (event.target) {
       console.log("handleItemClick:", event.target.tagName);
       if (typeof event.target.tagName === "string") {
-        // Font-Awesome button clicked, return to handle it
-        return;
+        if (event.target.tagName === "I") {
+          console.log("handleItemClick: Handling view/refresh/delete button click", event.target, event.target.class);
+          // Font-Awesome button clicked, return to handle it
+          return;
+        }
         /*if (event.target.tagName === "I") {
           if (event.target.tagName.indexOf("fa-history")) {
             console.log("handleItemClick: Processing refresh action");
