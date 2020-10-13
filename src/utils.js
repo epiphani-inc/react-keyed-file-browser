@@ -12,10 +12,23 @@ function moveFilesAndFolders(props, monitor, component) {
   const folders = []
   const files = []
 
+  console.log("moveFilesAndFolders:", props.browserProps.selection);
   props.browserProps.selection.forEach(selection => {
-    selection[selection.length - 1] === '/' ? folders.push(selection) : files.push(selection)
+    console.log("moveFilesAndFolders: checking:", selection);
+    if (typeof selection === "string") {
+      selection[selection.length - 1] === '/' ? folders.push(selection) : files.push(selection)
+    } else {
+      // We don't want to allow student files to be moved in case of a multiple selection
+      if (!(selection.isStudent)) {
+        console.log("moveFilesAndFolders: adding file")
+        selection.fileKey[selection.fileKey.length - 1] === '/' ? folders.push(selection) : files.push(selection)
+      } else {
+        console.log("moveFilesAndFolders: Skipping moving student file in case of multi select");
+      }
+    }
   })
 
+  console.log("moveFilesAndFolders: files", files, "folder:", folders);
   props.browserProps.openFolder(dropResult.path)
 
   folders
@@ -35,12 +48,14 @@ function moveFilesAndFolders(props, monitor, component) {
 
   files
     .forEach(selection => {
-      const fileKey = selection
+      // file selections are objects not strings any more
+      const fileKey = (typeof selection === "string") ? selection : selection.fileKey
       const fileNameParts = fileKey.split('/')
       const fileName = fileNameParts[fileNameParts.length - 1]
       const newKey = `${dropResult.path}${fileName}`
       if (newKey !== fileKey && props.browserProps.moveFile) {
-        props.browserProps.moveFile(fileKey, newKey)
+        // pass the selection object instead of the fileKey
+        props.browserProps.moveFile(selection, newKey)
       }
     })
 }
