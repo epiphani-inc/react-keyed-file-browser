@@ -8,6 +8,7 @@ function floatPrecision(floatValue, precision) {
 }
 
 function fileSize(size) {
+  if (typeof size === "string") return size;
   if (size > 1024) {
     const kbSize = size / 1024
     if (kbSize > 1024) {
