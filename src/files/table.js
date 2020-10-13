@@ -63,13 +63,11 @@ class RawTableFile extends BaseFile {
       )
     }
 
-    //console.log("RawTableFile: isDraggable", isDraggable, this.props);
     let draggable = (
       <div>
         {name}
       </div>
     )
-    // if (typeof browserProps.moveFile === 'function') {
     if ((typeof browserProps.moveFile === 'function') && (isDraggable)) {
       draggable = connectDragPreview(draggable)
     }

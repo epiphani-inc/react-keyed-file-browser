@@ -37,11 +37,8 @@ class RawTableHeader extends React.Component {
           selected: this.props.isSelected,
         })}
       >
-        {(this.props.browserProps.columns && this.props.browserProps.headers) ? 
+        {(this.props.browserProps.columns && this.props.browserProps.headers) ?
         <>
-        {/*this.props.browserProps.columns.map(row => (
-          <th className={row}>{this.props.browserProps.headers[row].name}</th>
-        ))*/}
         {Object.entries(this.props.browserProps.headers).map( ([key, ch]) => {
           if (!ch.isHidden) {
           return (

@@ -58,7 +58,6 @@ class BaseFolder extends React.Component {
 
   handleFolderClick = (event) => {
     event.stopPropagation()
-    console.log("handleFolderClick:", this.props, this.props.browserProps.select);
     this.props.browserProps.select(this.props.fileKey, 'folder', event.ctrlKey || event.metaKey, event.shiftKey)
   }
   handleFolderDoubleClick = (event) => {
@@ -122,7 +121,6 @@ class BaseFolder extends React.Component {
 
   handleDeleteSubmit = (event) => {
     event.preventDefault()
-    console.log("handleDeleteSubmit:", event, this.props);
     if (!this.props.browserProps.deleteFolder) {
       return
     }
@@ -131,7 +129,6 @@ class BaseFolder extends React.Component {
 
   handleViewSubmit = (event) => {
     event.preventDefault()
-    console.log("handleViewSubmit:", event, this.props);
     if (!this.props.browserProps.viewFolder) {
       return
     }
@@ -140,7 +137,6 @@ class BaseFolder extends React.Component {
 
   handleRefreshSubmit = (event) => {
     event.preventDefault()
-    console.log("handleRefreshSubmit:", event, this.props);
     if (!this.props.browserProps.refreshFolder) {
       return
     }
@@ -166,6 +162,7 @@ class BaseFolder extends React.Component {
       ) {
         render = this.props.connectDragSource(render)
       }
+      // Class folder cannot be a drop target
       if (
         (typeof this.props.browserProps.createFiles === 'function' ||
          typeof this.props.browserProps.moveFolder === 'function' ||

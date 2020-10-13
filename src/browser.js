@@ -55,15 +55,12 @@ function getParentPath(path) {
 // "includes" check any more.
 function isItemInList(file, checkList) {
   let foundItem = false;
-  //console.log("isItemInList:", file, checkList);
   for (let idx in checkList) {
     let curSel = checkList[idx];
     if (typeof curSel === "string") {
-      //console.log("isItemInList: string match")
       foundItem = (curSel === file.key) ? true : false;
       if (foundItem) break;
     } else if (curSel.id === file.id) {
-      //console.log("isItemInList: id match")
       foundItem = true;
       break;
     }
@@ -86,13 +83,11 @@ function showFile(fname, browserProps) {
     showFile = true;
   }
 
-  console.log("showFile:", fname, showFile);
   return showFile;
 }
 
 function filterFile(file, terms) {
   if (file.key in filterMap) {
-    console.error(`filterFile: Found ${file.key} in filterMap`, filterMap[file.key])
     return filterMap[file.key];
   }
   let skip = false
@@ -103,7 +98,6 @@ function filterFile(file, terms) {
       skip = true
     }
   })
-  if (!skip) console.log("filterFile: found match:", cf, file, terms);
   return skip;
 }
 
@@ -113,7 +107,6 @@ function filterMatchesDescendants(file, terms) {
     filterMap[file.key] = false;
     return false;
   }
-  //const terms = gNameFilter.toLowerCase().split(' ')
   let skip = filterFile(file, terms);
   if (!skip) {
     filterMap[file.key] = skip;
@@ -135,30 +128,16 @@ function filterMatchesDescendants(file, terms) {
   return true;
 }
 
-/*function getOpenState(file, browserProps) {
-  //let isOpen = false;
-  if (!isFolder(file)) return false;
-  if (gNameFilter && file.isClass) return false;
-
-  if (file.key in browserProps.openFolders) return true;
-  let skip = filterMatchesDescendants(file);
-  if (!skip) return true;
-  return false;
-  //return isOpen;
-}*/
-
 function getItemProps(file, browserProps) {
   var retVal = {
     key: file.id ? `${file.id}` : `file-${file.key}`,
     fileKey: file.key,
     isSelected: (isItemInList(file, browserProps.selection)),
-    //isOpen: getOpenState(file, browserProps),
     isOpen: file.key in browserProps.openFolders,
     isRenaming: browserProps.activeAction === 'rename' && isItemInList(file, browserProps.actionTargets),
     isDeleting: browserProps.activeAction === 'delete' && isItemInList(file, browserProps.actionTargets),
     isDraft: !!file.draft,
   }
-  //console.log("getItemProps:", file, retVal);
   return retVal;
 }
 
@@ -406,7 +385,6 @@ class RawFileBrowser extends React.Component {
   }
 
   viewFile = (keys) => {
-    console.error("viewFile:", keys);
     this.setState({
       activeAction: null,
       actionTargets: [],
@@ -417,7 +395,6 @@ class RawFileBrowser extends React.Component {
   }
 
   viewFolder = (key) => {
-    console.log()
     this.setState({
       activeAction: null,
       actionTargets: [],
@@ -428,7 +405,6 @@ class RawFileBrowser extends React.Component {
   }
 
   refreshFile = (keys) => {
-    console.error("refreshFile:", keys);
     this.setState({
       activeAction: null,
       actionTargets: [],
@@ -450,7 +426,6 @@ class RawFileBrowser extends React.Component {
 
 
   deleteFile = (keys) => {
-    console.error("deleteFile:", keys);
     this.setState({
       activeAction: null,
       actionTargets: [],
@@ -607,12 +582,10 @@ class RawFileBrowser extends React.Component {
   }
   handleActionBarRenameClick = (event) => {
     event.preventDefault()
-    console.log("handleActionBarRenameClick", this.state.selection);
     this.beginAction('rename', this.state.selection)
   }
   handleActionBarDeleteClick = (event) => {
     event.preventDefault()
-    console.log("handleActionBarDeleteClick", this.state.selection);
     this.beginAction('delete', this.state.selection)
   }
   handleActionBarAddFolderClick = (event) => {
@@ -826,13 +799,11 @@ class RawFileBrowser extends React.Component {
   }
 
   handleMultipleDeleteSubmit = () => {
-    console.log("handleMultipleDeleteSubmit:", this)
     this.deleteFolder(this.state.selection.filter(selection => typeof selection === "string"))
     this.deleteFile(this.state.selection.filter(selection => typeof selection !== "string"))
   }
 
   getFiles() {
-    console.log("getFiles:", this.props.files);
     const browserProps = this.getBrowserProps();
     let files = this.props.files.concat([])
     if (this.state.activeAction === 'createFolder') {
@@ -846,16 +817,9 @@ class RawFileBrowser extends React.Component {
       const filteredFiles = []
       const terms = this.state.nameFilter.toLowerCase().split(' ')
       files.map((file) => {
-        /*if (isFolder(file) && !file.isClass) {
-          filteredFiles.push(file);
-          return;
-        }*/
         let skip = filterMatchesDescendants(file, terms);
         if (skip && !isFolder(file)) {
           return
-        }
-        if (isFolder(file)) {
-          console.log("filterMatchesDescendants:", file.key, "skip:", skip);
         }
         if (!showFile(file.key, browserProps)) {
           return
@@ -878,13 +842,11 @@ class RawFileBrowser extends React.Component {
     if (typeof this.props.sort === 'function') {
       files = this.props.sort(files)
     }
-    console.log("getFiles: returned files:", files);
     return files
   }
 
   getSelectedItems(files) {
     const { selection } = this.state
-    //console.error("getSelectedItem:", files, selection);
     const selectedItems = []
     const findSelected = (item) => {
       if (isItemInList(item, selection)) {
@@ -909,12 +871,10 @@ class RawFileBrowser extends React.Component {
 
     const files = this.getFiles()
     const selectedItems = this.getSelectedItems(files)
-    console.log("curSelectedItems:", selectedItems);
 
     let header
     /** @type any */
     let contents = this.renderFiles(files, 0)
-    console.log("FileBrowser render:", contents);
     switch (this.props.renderStyle) {
       case 'table':
         if (!contents.length) {
@@ -957,7 +917,6 @@ class RawFileBrowser extends React.Component {
         }
 
         if (this.props.headerRenderer) {
-          //console.log("headerRenderer:", headerProps, this.props.headerRendererProps);
           header = (
             <thead>
               <this.props.headerRenderer

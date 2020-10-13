@@ -35,7 +35,6 @@ const Actions = (props) => {
   /** @type any */
   let actions = []
 
-  console.error("Action Buttons:", props, selectedItems);
   if (selectedItems.length) {
     // Something is selected. Build custom actions depending on what it is.
     const selectedItemsAction = selectedItems.filter(item => item.action)
@@ -63,6 +62,7 @@ const Actions = (props) => {
         </div>
       )
     } else {
+      // Do not show add-subfolder for class folders in action menu
       if (isFolder && !isClass && canCreateFolder && !nameFilter) {
         actions.push(
           <li key="action-add-folder">
@@ -108,6 +108,7 @@ const Actions = (props) => {
       }
 
       if (!itemsWithoutKeyDerived && !isFolder && canDeleteFile && selectedItems.length > 1) {
+        // show delete action only if multiple items were selected
         actions.push(
           <li key="action-delete">
             <a
@@ -121,6 +122,7 @@ const Actions = (props) => {
           </li>
         )
       } else if (!itemsWithoutKeyDerived && isFolder && canDeleteFolder && selectedItems.length > 1) {
+        // show delete action only if multiple items were selected
         actions.push(
           <li key="action-delete">
             <a

@@ -39,7 +39,6 @@ export default function(files, root) {
 
   function childIsStudent(childArr) {
     for (let idx in childArr) {
-//WORKING      if ((childArr[idx].id) && (childArr[idx].id.indexOf("|") >= 0)) {
       if (childArr[idx].isStudent) {
         return true;
       }

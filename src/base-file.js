@@ -74,31 +74,17 @@ class BaseFile extends React.Component {
 
   // Handle multiple buttons on the table row.
   handleItemClick = (event) => {
-    console.log("handleItemClick:", this.props, event.target);
     if (event.target) {
-      console.log("handleItemClick:", event.target.tagName);
       if (typeof event.target.tagName === "string") {
         if (event.target.tagName === "I") {
           console.log("handleItemClick: Handling view/refresh/delete button click", event.target, event.target.class);
           // Font-Awesome button clicked, return to handle it
           return;
         }
-        /*if (event.target.tagName === "I") {
-          if (event.target.tagName.indexOf("fa-history")) {
-            console.log("handleItemClick: Processing refresh action");
-            //this.handleRefreshSubmit(event);
-            return;
-          } else if (event.target.tagName.indexOf("fa-eye")) {
-            console.log("handleItemClick: Processing view action");
-            //this.handleViewSubmit(event);
-            return;
-          }
-        }*/
       }
     }
     if (event.target && event.target.type === "submit") {
       // Handle delete confirm button
-      console.log("handleItemClick: Processing target action");
       return;
     }
     event.stopPropagation()
@@ -113,7 +99,6 @@ class BaseFile extends React.Component {
     if (!this.props.browserProps.renameFile) {
       return
     }
-    console.log("handleRenameClick: BaseFile:", this.props);
     this.props.browserProps.beginAction('rename', this.props)
   }
   handleNewNameChange = (event) => {
@@ -121,12 +106,10 @@ class BaseFile extends React.Component {
     this.setState({ newName: newName })
   }
   handleRenameSubmit = (event) => {
-    console.log("handleRenameSubmit entered")
     if (event) {
       event.preventDefault()
     }
     if (!this.props.browserProps.renameFile) {
-      console.log("handleRenameSubmit no renameFile")
       return
     }
     const newName = this.state.newName.trim()
@@ -137,7 +120,6 @@ class BaseFile extends React.Component {
       //   title: 'Invalid new file name',
       //   body: 'File name cannot be blank',
       // })
-      console.log("handleRenameSubmit empty new name")
       return
     }
     const invalidChar = ['/', '\\']
@@ -153,7 +135,6 @@ class BaseFile extends React.Component {
     if (slashIndex !== -1) {
       newKey = `${this.props.fileKey.substr(0, slashIndex)}/${newName}`
     }
-    console.log("handleRenameSubmit", this.props, newKey);
     this.props.browserProps.renameFile(this.props, newKey)
   }
 
@@ -161,14 +142,11 @@ class BaseFile extends React.Component {
     if (!this.props.browserProps.deleteFile) {
       return
     }
-    console.log("handleDeleteClick: BaseFile:", this.props);
     this.props.browserProps.beginAction('delete', this.props)
   }
   handleDeleteSubmit = (event) => {
     event.preventDefault()
-    console.log("handleDeleteSubmit:", event, this.props);
     if (!this.props.browserProps.deleteFile) {
-      console.log("handleDeleteSubmit: deleteFile not set");
       return
     }
 
@@ -177,9 +155,7 @@ class BaseFile extends React.Component {
 
   handleViewSubmit = (event) => {
     event.preventDefault()
-    console.log("handleViewSubmit:", event, this.props);
     if (!this.props.browserProps.viewFile) {
-      console.log("handleViewSubmit: viewFile not set");
       return
     }
 
@@ -188,9 +164,7 @@ class BaseFile extends React.Component {
 
   handleRefreshSubmit = (event) => {
     event.preventDefault()
-    console.log("handleRefreshSubmit:", event, this.props);
     if (!this.props.browserProps.refreshFile) {
-      console.log("handleRefreshSubmit: refreshFile not set");
       return
     }
 
@@ -228,15 +202,12 @@ class BaseFile extends React.Component {
 const baseFileIsItemSelected = (item) => {
   let foundItem = false;
   let selection = item.browserProps.selection;
-  console.log("baseFileIsItemSelected:", item);
   for (let idx in selection) {
     let curSel = selection[idx];
     if (typeof curSel === "string") {
-      console.log("baseFileIsItemSelected: string match")
       foundItem = (curSel === item.key) ? true : false;
       if (foundItem) break;
     } else if (curSel.id === item.id) {
-      console.log("baseFileIsItemSelected: id match")
       foundItem = true;
       break;
     }
@@ -254,7 +225,6 @@ const dragSource = {
       !props.browserProps.selection.length ||
       !baseFileIsItemSelected(props)
     ) {
-      console.log("beginDrag:", props);
       props.browserProps.select(props, 'file')
     }
     return {
@@ -263,7 +233,6 @@ const dragSource = {
   },
 
   endDrag(props, monitor, component) {
-    console.log("endDrag:", props, monitor, component);
     moveFilesAndFolders(props, monitor, component)
   },
 }
