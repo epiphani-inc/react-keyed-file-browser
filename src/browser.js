@@ -50,7 +50,7 @@ function getParentPath(path) {
   return path.replace(/\/?[^/]+\/?$/, "");
 }
 
-// "cehckList" (selected items) has path strings for folders
+// "checkList" (selected items) has path strings for folders
 // and file objects for files now, so we cannot do a simple
 // "includes" check any more.
 function isItemInList(file, checkList) {
@@ -886,27 +886,8 @@ class RawFileBrowser extends React.Component {
     const { selection } = this.state
     //console.error("getSelectedItem:", files, selection);
     const selectedItems = []
-    const internalIsItemSelected = (item) => {
-      let foundItem = false;
-      //console.log("internalIsItemSelected:", item);
-      for (let idx in selection) {
-        let curSel = selection[idx];
-        if (typeof curSel === "string") {
-          //console.log("internalIsItemSelected: string match")
-          foundItem = (curSel === item.key) ? true : false;
-          if (foundItem) break;
-        } else if (curSel.id === item.id) {
-          //console.log("internalIsItemSelected: id match")
-          foundItem = true;
-          break;
-        }
-      }
-
-      return foundItem;
-    }
-      
     const findSelected = (item) => {
-      if (internalIsItemSelected(item)) {
+      if (isItemInList(item, selection)) {
         selectedItems.push(item)
       }
       if (item.children) {
