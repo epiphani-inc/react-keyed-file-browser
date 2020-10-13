@@ -2,6 +2,7 @@ import React from 'react'
 import ClassNames from 'classnames'
 import { DragSource, DropTarget } from 'react-dnd'
 import { NativeTypes } from 'react-dnd-html5-backend'
+import { formatDistanceToNow } from 'date-fns'
 
 import BaseFolder, { BaseFolderConnectors } from './../base-folder.js'
 import { BaseFileConnectors } from './../base-file.js'
@@ -10,10 +11,33 @@ class RawTableFolder extends BaseFolder {
   render() {
     const {
       isOpen, isDragging, isDeleting, isRenaming, isDraft, isOver, isSelected,
-      action, url, browserProps, connectDragPreview, depth,
+      action, url, browserProps, connectDragPreview, depth, isClass
     } = this.props
 
-    const icon = browserProps.icons[isOpen ? 'FolderOpen' : 'Folder']
+    //console.log("RawTableFolder:", this.props);
+    let iconType;
+    let cm = undefined;
+    let ce = undefined;
+
+    if (isClass) {
+      //console.log("ClassFolder:", this);
+      iconType = isOpen ? 'ClassFolderOpen' : 'ClassFolder';
+
+      if (Array.isArray(this.props.children)) {
+        for (let idx in this.props.children) {
+          cm = this.props.children[idx].classModified;
+          ce = this.props.children[idx].classExpire;
+
+          if (cm && ce) {
+            break;
+          }
+        }
+      }
+    } else {
+      iconType = isOpen ? 'FolderOpen' : 'Folder';
+    }
+
+    const icon = browserProps.icons[iconType]
     const inAction = (isDragging || action)
 
     const ConfirmDeletionRenderer = browserProps.confirmDeletionRenderer
@@ -83,7 +107,46 @@ class RawTableFolder extends BaseFolder {
           </div>
         </td>
         <td />
-        <td />
+        {cm
+          ? <td className="modified">
+              {formatDistanceToNow(cm, { addSuffix: true })}
+            </td>
+          : <td />
+        }
+        {ce
+          ? <td className="modified">
+              {formatDistanceToNow(ce, { addSuffix: true })}
+            </td>
+          : <td />
+        }
+        {(isClass && (browserProps.selection.length <= 1))
+          ? <td>
+              <a
+                onClick={this.handleRefreshSubmit}
+                href="#"
+                role="button"
+              >
+                {browserProps.icons.Refresh}
+              </a>
+              &nbsp;&nbsp;&nbsp;
+              <a
+                onClick={this.handleViewSubmit}
+                href="#"
+                role="button"
+              >
+                {browserProps.icons.View}
+              </a>
+              &nbsp;&nbsp;&nbsp;
+              <a
+                onClick={this.handleDeleteSubmit}
+                href="#"
+                role="button"
+              >
+                {browserProps.icons.Delete}
+              </a>
+            </td>
+          : <td />
+        }
       </tr>
     )
 
