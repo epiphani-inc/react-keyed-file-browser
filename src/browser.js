@@ -37,6 +37,11 @@ function cleanupSlash(key) {
   return a;
 }
 
+function makeFolder(key) {
+  if (key[key.length - 1] !== '/') key = key + "/";
+  return key;
+}
+
 function getLastPath(path) {
   // this regex takes out the path and only gives the last folder/file name
   // For e.g: "hello/world/foo" would return just "foo"
@@ -70,14 +75,14 @@ function isItemInList(file, checkList) {
 }
 
 // Show file only if parent folder is open
-function showFile(fname, browserProps) {
+function showFile(fname, openFolders) {
   let pname = cleanupSlash(fname);
   pname = getParentPath(pname);
   let showFile;
 
   if (pname) {
     pname = pname + "/"
-    showFile = pname in browserProps.openFolders
+    showFile = pname in openFolders
   } else {
     // This file is in the root folder, so always send true to show it
     showFile = true;
@@ -86,42 +91,75 @@ function showFile(fname, browserProps) {
   return showFile;
 }
 
-function filterFile(file, terms) {
+// Add all the ancestors folders (in path) of "fileKey"
+// into the open folder map ("of")
+function openAncestors(fileKey, ofMap) {
+  let pp = getParentPath(fileKey);
+
+  while (pp) {
+    let ppf = makeFolder(pp);
+    if (!(ppf in ofMap)) {
+      console.log("openAncestors: adding:", ppf);
+      ofMap[ppf] = true;
+    }
+    pp = getParentPath(pp);
+  }
+}
+
+function filterFile(file, terms, checkOnlyName) {
   if (file.key in filterMap) {
     return filterMap[file.key];
   }
-  let skip = false
+  let skip = true
   let cf = file.key.toLowerCase().trim();
-  if (!isFolder(file)) cf = getLastPath(cf);
-  terms.map((term) => {
-    if (cf.indexOf(term) === -1) {
-      skip = true
+  if (checkOnlyName) cf = getLastPath(cf);
+  for (let idx in terms) {
+    let term = terms[idx];
+    if (cf.indexOf(term) !== -1) {
+      // allow if any of the terms matches instead of all terms matching
+      skip = false;
+      break;
     }
-  })
+  }
   return skip;
 }
 
 function filterMatchesDescendants(file, terms) {
-  if (!(gNameFilter)) return true;
-  if (isFolder(file)) {
+  //if (!(gNameFilter)) return true;
+  /*if (isFolder(file)) {
     filterMap[file.key] = false;
     return false;
-  }
-  let skip = filterFile(file, terms);
+  }*/
+  // If this is a folder then we want to check only
+  // the name of the folder otherwise we want to match
+  // the whole path (b/c non-empty folders do not show
+  // up as a separate item in the file list)
+  let skip = filterFile(file, terms, isFolder(file));
   if (!skip) {
+    console.log("filterMatchesDescendants: found match:", file.key);
     filterMap[file.key] = skip;
     return skip;
+  } else {
+    console.log("filterMatchesDescendants: no match:", file.key);
   }
 
   if (file.children) {
     file.children.map((child) => {
-      if (child.isStudent) return true;
+      if (child.isStudent) {
+        // We do not search student files
+        console.log("filterMatchesDescendants: skipping student:", child.key);
+        return true;
+      }
       let cSkip = filterMatchesDescendants(child, terms);
       if (!cSkip) {
+        console.log("filterMatchesDescendants: matched descendent:", child.key);
         filterMap[child.key] = cSkip;
         return cSkip;
       }
     })
+    console.log("filterMatchesDescendants: did not match any children:", file.key);
+  } else {
+    console.log("filterMatchesDescendants: does not have any children:", file.key);
   }
 
   filterMap[file.key] = true;
@@ -819,18 +857,36 @@ class RawFileBrowser extends React.Component {
     }
     if (this.state.nameFilter) {
       const filteredFiles = []
-      const terms = this.state.nameFilter.toLowerCase().split(' ')
+      const filteredOpenFolders = {};
+      const terms = this.state.nameFilter.trim().toLowerCase().split(' ')
       files.map((file) => {
+        console.log("getFiles: checking a file:", file.key);
         let skip = filterMatchesDescendants(file, terms);
-        if (skip && !isFolder(file)) {
+        if (skip) {
+          console.log("getFiles: skipping file:", file.key);
           return
         }
-        if (!showFile(file.key, browserProps)) {
+        openAncestors(file.key, filteredOpenFolders);
+        if (!showFile(file.key, filteredOpenFolders)) {
+          console.log("getFiles: not showing:", file.key);
           return
         }
+        if (isFolder(file)) {
+          console.log("getFiles: opening folder:", file.key);
+          filteredOpenFolders[file.key] = true;
+        }
+        console.log("getFiles: adding file:", file.key);
         filteredFiles.push(file)
       })
+      console.log("getFiles: opened folders:", filteredOpenFolders);
       files = filteredFiles
+      console.log("getFiles: selected files:", files);
+      //browserProps.openFolders = filteredOpenFolders;
+      /*this.setState(prevState => {
+        openFolders: {
+          ...filteredOpenFolders,
+        }
+      })*/
     }
     if (typeof this.props.group === 'function') {
       files = this.props.group(files, '')
@@ -873,12 +929,14 @@ class RawFileBrowser extends React.Component {
     }
     let renderedFiles
 
+    console.log("render: files", this.props.files, this.state.openFolders);
     const files = this.getFiles()
     const selectedItems = this.getSelectedItems(files)
 
     let header
     /** @type any */
     let contents = this.renderFiles(files, 0)
+    console.log("render: renderedFiles:", contents);
     switch (this.props.renderStyle) {
       case 'table':
         if (!contents.length) {
