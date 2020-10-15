@@ -20,4 +20,17 @@ function fileSize(size) {
   return `${size} B`
 }
 
-export { floatPrecision, fileSize }
+function localDateFormat(date) {
+  const tstamp = new Date(date);
+  var options = {
+      day: 'numeric',
+      month: 'short',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
+  };
+  var tstr = tstamp.toLocaleString('en-US', options);
+  return tstr
+}
+
+export { floatPrecision, fileSize, localDateFormat }

@@ -2,10 +2,10 @@ import React from 'react'
 import ClassNames from 'classnames'
 import { DragSource, DropTarget } from 'react-dnd'
 import { NativeTypes } from 'react-dnd-html5-backend'
-import { formatDistanceToNow } from 'date-fns'
 
 import BaseFolder, { BaseFolderConnectors } from './../base-folder.js'
 import { BaseFileConnectors } from './../base-file.js'
+import { localDateFormat } from '../files/utils.js'
 
 class RawTableFolder extends BaseFolder {
   render() {
@@ -108,13 +108,13 @@ class RawTableFolder extends BaseFolder {
         <td />
         {cm
           ? <td className="modified">
-              {formatDistanceToNow(cm, { addSuffix: true })}
+              {localDateFormat(cm)}
             </td>
           : <td />
         }
         {ce
           ? <td className="modified">
-              {formatDistanceToNow(ce, { addSuffix: true })}
+              {localDateFormat(ce)}
             </td>
           : <td />
         }
