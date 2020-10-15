@@ -719,6 +719,7 @@ class RawFileBrowser extends React.Component {
   }
 
   renderActionBar(selectedItems) {
+    const ConfirmMultipleDeletionRenderer = this.props.confirmMultipleDeletionRenderer
     const {
       icons, canFilter,
       filterRendererProps, filterRenderer: FilterRenderer,
@@ -779,6 +780,12 @@ class RawFileBrowser extends React.Component {
       <div className="action-bar">
         {filter}
         {actions}
+        <div>
+          {this.state.activeAction === 'delete' && this.state.selection.length > 1 &&
+            <ConfirmMultipleDeletionRenderer
+              handleDeleteSubmit={this.handleMultipleDeleteSubmit}
+            />}
+        </div>
       </div>
     )
   }
@@ -1019,17 +1026,11 @@ class RawFileBrowser extends React.Component {
         break
     }
 
-    const ConfirmMultipleDeletionRenderer = this.props.confirmMultipleDeletionRenderer
-
     return (
       <div className="rendered-react-keyed-file-browser">
         {this.props.actions}
         <div className="rendered-file-browser" ref={el => { this.browserRef = el }}>
           {this.props.showActionBar && this.renderActionBar(selectedItems)}
-          {this.state.activeAction === 'delete' && this.state.selection.length > 1 &&
-            <ConfirmMultipleDeletionRenderer
-              handleDeleteSubmit={this.handleMultipleDeleteSubmit}
-            />}
           <div className="files">
             {renderedFiles}
           </div>
