@@ -119,6 +119,15 @@ class BaseFolder extends React.Component {
     this.props.browserProps.beginAction('delete', this.props.fileKey)
   }
 
+  handleTableDeleteClick = (event) => {
+    event.stopPropagation()
+    if (!this.props.browserProps.deleteFolder) {
+      return
+    }
+    this.props.browserProps.select(this.props.fileKey, 'folder', null, null)
+    this.props.browserProps.beginAction('delete', [this.props.fileKey])
+  }
+
   handleDeleteSubmit = (event) => {
     event.preventDefault()
     if (!this.props.browserProps.deleteFolder) {

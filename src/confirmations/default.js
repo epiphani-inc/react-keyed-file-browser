@@ -7,6 +7,7 @@ const ConfirmDeletion = (props) => {
     handleDeleteSubmit,
     handleFileClick,
     url,
+    buttonText,
   } = props
 
   return (
@@ -20,7 +21,7 @@ const ConfirmDeletion = (props) => {
       </a>
       <div>
         <button type="submit">
-          Confirm Deletion
+          {buttonText ? buttonText : "Confirm Deletion"}
         </button>
       </div>
     </form>
@@ -32,6 +33,7 @@ ConfirmDeletion.propTypes = {
   handleDeleteSubmit: PropTypes.func,
   handleFileClick: PropTypes.func,
   url: PropTypes.string,
+  buttonText: PropTypes.string,
 }
 
 ConfirmDeletion.defaultProps = {

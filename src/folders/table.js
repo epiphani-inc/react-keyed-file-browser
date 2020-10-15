@@ -14,13 +14,11 @@ class RawTableFolder extends BaseFolder {
       action, url, browserProps, connectDragPreview, depth, isClass
     } = this.props
 
-    //console.log("RawTableFolder:", this.props);
     let iconType;
     let cm = undefined;
     let ce = undefined;
 
     if (isClass) {
-      //console.log("ClassFolder:", this);
       iconType = isOpen ? 'ClassFolderOpen' : 'ClassFolder';
 
       if (Array.isArray(this.props.children)) {
@@ -49,6 +47,7 @@ class RawTableFolder extends BaseFolder {
           handleDeleteSubmit={this.handleDeleteSubmit}
           handleFileClick={this.handleFileClick}
           url={url}
+          buttonText={isClass ? "Confirm Deletion of entire class" : "Confirm Deletion of all items in this folder"}
         >
           {icon}
           {this.getName()}
@@ -138,7 +137,7 @@ class RawTableFolder extends BaseFolder {
               </a>
               &nbsp;&nbsp;&nbsp;
               <a
-                onClick={this.handleDeleteSubmit}
+                onClick={this.handleTableDeleteClick}
                 href="#"
                 role="button"
               >

@@ -138,7 +138,6 @@ class BaseFile extends React.Component {
   }
 
   handleTableDeleteClick = (event) => {
-    console.log("handleTableDeleteClick:", event, event.target)
     event.preventDefault()
     if (!this.props.browserProps.deleteFile) {
       return
