@@ -77,9 +77,6 @@ class BaseFile extends React.Component {
     if (event.target) {
       if (typeof event.target.tagName === "string") {
         if (event.target.tagName === "I") {
-          let buttonType = event.target.getAttribute("class");
-          console.log("handleItemClick: Handling view/refresh/delete button click",
-            event.target, event.target.class, buttonType);
           // Font-Awesome button clicked, return to handle it
           return;
         }
