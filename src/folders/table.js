@@ -45,7 +45,13 @@ class RawTableFolder extends BaseFolder {
       name = (
         <ConfirmDeletionRenderer
           handleDeleteSubmit={this.handleDeleteSubmit}
-          handleFileClick={this.handleFileClick}
+          handleFileClick={(event) => {
+            // In case of a folder deletion confirmation in progress,
+            // we do not want a download to happen if someone clicks
+            // on the folder icon/text instead of the confirmation button.
+            event.preventDefault();
+            event.stopPropagation();
+          }}
           url={url}
           buttonText={isClass ? "Confirm Deletion of entire class" : "Confirm Deletion of all items in this folder"}
         >
