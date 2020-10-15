@@ -34,6 +34,7 @@ const Actions = (props) => {
 
   /** @type any */
   let actions = []
+  let inDeletion = (props.browserProps.activeAction === "delete")
 
   if (selectedItems.length) {
     // Something is selected. Build custom actions depending on what it is.
@@ -79,7 +80,7 @@ const Actions = (props) => {
       }
 
       const itemsWithoutKeyDerived = selectedItems.find(item => !item.keyDerived)
-      if (!itemsWithoutKeyDerived && !isFolder && canRenameFile && selectedItems.length === 1) {
+      if (!itemsWithoutKeyDerived && !inDeletion && !isFolder && canRenameFile && selectedItems.length === 1) {
         actions.push(
           <li key="action-rename">
             <a
@@ -92,7 +93,7 @@ const Actions = (props) => {
             </a>
           </li>
         )
-      } else if (!itemsWithoutKeyDerived && isFolder && canRenameFolder) {
+      } else if (!itemsWithoutKeyDerived && !inDeletion && isFolder && canRenameFolder) {
         actions.push(
           <li key="action-rename">
             <a
