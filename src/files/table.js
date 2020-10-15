@@ -115,7 +115,7 @@ class RawTableFile extends BaseFile {
             </a>
             &nbsp;&nbsp;&nbsp;
             <a
-              onClick={this.handleDeleteSubmit}
+              onClick={this.handleTableDeleteClick}
               href="#"
               role="button"
             >

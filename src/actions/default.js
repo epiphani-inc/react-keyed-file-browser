@@ -122,7 +122,9 @@ const Actions = (props) => {
           </li>
         )
       } else if (!itemsWithoutKeyDerived && isFolder && canDeleteFolder && !isClass) {
-        // show delete action only if multiple items were selected
+        // Don't need the multiple item check for regular folders otherwise we cannot
+        // delete a single folder. Single class delete button is rendered on the in
+        // the table view on each row.
         actions.push(
           <li key="action-delete">
             <a

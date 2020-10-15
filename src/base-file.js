@@ -77,7 +77,9 @@ class BaseFile extends React.Component {
     if (event.target) {
       if (typeof event.target.tagName === "string") {
         if (event.target.tagName === "I") {
-          console.log("handleItemClick: Handling view/refresh/delete button click", event.target, event.target.class);
+          let buttonType = event.target.getAttribute("class");
+          console.log("handleItemClick: Handling view/refresh/delete button click",
+            event.target, event.target.class, buttonType);
           // Font-Awesome button clicked, return to handle it
           return;
         }
@@ -136,6 +138,16 @@ class BaseFile extends React.Component {
       newKey = `${this.props.fileKey.substr(0, slashIndex)}/${newName}`
     }
     this.props.browserProps.renameFile(this.props, newKey)
+  }
+
+  handleTableDeleteClick = (event) => {
+    console.log("handleTableDeleteClick:", event, event.target)
+    event.preventDefault()
+    if (!this.props.browserProps.deleteFile) {
+      return
+    }
+    this.props.browserProps.select(this.props, 'file', null, null)
+    this.props.browserProps.beginAction('delete', this.props)
   }
 
   handleDeleteClick = (event) => {
