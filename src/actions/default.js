@@ -121,7 +121,7 @@ const Actions = (props) => {
             </a>
           </li>
         )
-      } else if (!itemsWithoutKeyDerived && isFolder && canDeleteFolder && selectedItems.length > 1) {
+      } else if (!itemsWithoutKeyDerived && isFolder && canDeleteFolder && !isClass) {
         // show delete action only if multiple items were selected
         actions.push(
           <li key="action-delete">
