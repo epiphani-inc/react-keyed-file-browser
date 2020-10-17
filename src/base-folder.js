@@ -187,7 +187,12 @@ class BaseFolder extends React.Component {
 
 const dragSource = {
   beginDrag(props) {
-    if (!props.browserProps.selection.length) {
+    // If multiple items are not selected, and the current item that
+    // was started to be dragged is not selected, then select it.
+    if (
+      !props.browserProps.selection.length ||
+      !props.browserProps.selection.includes(props.fileKey)
+    ) {
       props.browserProps.select(props.fileKey, 'folder')
     }
     return {
