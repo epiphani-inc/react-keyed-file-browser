@@ -183,6 +183,7 @@ class RawFileBrowser extends React.Component {
     canFilter: PropTypes.bool.isRequired,
     showFoldersOnFilter: PropTypes.bool,
     noFilesMessage: PropTypes.string,
+    doneLoading: PropTypes.bool,
 
     group: PropTypes.func.isRequired,
     sort: PropTypes.func.isRequired,
@@ -923,6 +924,14 @@ class RawFileBrowser extends React.Component {
               <tr>
                 <td colSpan={100}>
                   No files matching "{this.state.nameFilter}".
+                </td>
+              </tr>
+            )
+          } else if (this.props.doneLoading === false) {
+            contents = (
+              <tr>
+                <td colSpan={100}>
+                  {this.props.icons.Loading}{"Loading..."}
                 </td>
               </tr>
             )
