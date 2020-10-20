@@ -509,7 +509,13 @@ class RawFileBrowser extends React.Component {
 
   endAction = () => {
     if (this.state.selection && this.state.selection.length > 0 && (
-      this.state.selection.filter((selection) => selection.match(regexForNewFolderOrFileSelection)).length > 0
+      this.state.selection.filter((selection) => {
+        if (typeof selection === "string") {
+          return selection.match(regexForNewFolderOrFileSelection)
+        } else {
+          return selection.fileKey.match(regexForNewFolderOrFileSelection)
+        }
+      }).length > 0
     )) {
       this.setState({ selection: [] })
     }
