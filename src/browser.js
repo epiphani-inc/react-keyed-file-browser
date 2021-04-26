@@ -232,6 +232,10 @@ class RawFileBrowser extends React.Component {
     onDeleteFolder: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     onDownloadFile: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     onDownloadFolder: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+    onBookmarkedFolder: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+    onBookmarkRemovedFolder: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+    onBookmarkedFile: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+    onBookmarkRemovedFile: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
 
     onSelect: PropTypes.func,
     onSelectFile: PropTypes.func,
@@ -453,6 +457,45 @@ class RawFileBrowser extends React.Component {
     })
   }
 
+  onBookmarkedFile = (keys) => {
+    this.setState({
+      activeAction: null,
+      actionTargets: [],
+      selection: [],
+    }, () => {
+      this.props.onBookmarkedFile(keys)
+    })
+  }
+
+  onBookmarkedFolder = (key) => {
+    this.setState({
+      activeAction: null,
+      actionTargets: [],
+      selection: [],
+    }, () => {
+      this.props.onBookmarkedFolder(key)
+    })
+  }
+
+  onBookmarkRemovedFile = (keys) => {
+    this.setState({
+      activeAction: null,
+      actionTargets: [],
+      selection: [],
+    }, () => {
+      this.props.onBookmarkRemovedFile(keys)
+    })
+  }
+
+  onBookmarkRemovedFolder = (key) => {
+    this.setState({
+      activeAction: null,
+      actionTargets: [],
+      selection: [],
+    }, () => {
+      this.props.onBookmarkRemovedFolder(key)
+    })
+  }
 
   deleteFile = (keys) => {
     this.setState({
@@ -720,6 +763,10 @@ class RawFileBrowser extends React.Component {
       viewFolder: this.props.onViewFolder ? this.viewFolder : undefined,
       refreshFile: this.props.onRefreshFile ? this.refreshFile : undefined,
       refreshFolder: this.props.onRefreshFolder ? this.refreshFolder : undefined,
+      bookmarkFile: this.props.onBookmarkedFile ? this.onBookmarkedFile : undefined,
+      bookmarkFolder: this.props.onBookmarkedFolder ? this.onBookmarkedFolder : undefined,
+      removeFileBookmark: this.props.onBookmarkRemovedFile ? this.onBookmarkRemovedFile : undefined,
+      removeFolderBookmark: this.props.onBookmarkRemovedFolder ? this.onBookmarkRemovedFolder : undefined,
 
       getItemProps: getItemProps,
     }

@@ -179,6 +179,24 @@ class BaseFile extends React.Component {
     this.props.browserProps.refreshFile([this.props]);
   }
 
+  handleRemoveBookmark = (event) => {
+    event.preventDefault()
+    if (!this.props.browserProps.removeFileBookmark) {
+      return
+    }
+
+    this.props.browserProps.removeFileBookmark([this.props]);
+  }
+
+  handleAddBookmark = (event) => {
+    event.preventDefault()
+    if (!this.props.browserProps.bookmarkFile) {
+      return
+    }
+
+    this.props.browserProps.bookmarkFile([this.props]);
+  }
+
   handleCancelEdit = (event) => {
     this.props.browserProps.endAction()
   }

@@ -14,6 +14,7 @@ class BaseFolder extends React.Component {
     isRenaming: PropTypes.bool,
     isDeleting: PropTypes.bool,
     isClass: PropTypes.bool,
+    isBookmarked: PropTypes.bool,
 
     connectDragSource: PropTypes.func,
     connectDropTarget: PropTypes.func,
@@ -150,6 +151,24 @@ class BaseFolder extends React.Component {
       return
     }
     this.props.browserProps.refreshFolder([this.props.fileKey])
+  }
+
+  handleRemoveBookmark = (event) => {
+    event.preventDefault()
+    if (!this.props.browserProps.removeFolderBookmark) {
+      return
+    }
+
+    this.props.browserProps.removeFolderBookmark([this.props.fileKey]);
+  }
+
+  handleAddBookmark = (event) => {
+    event.preventDefault()
+    if (!this.props.browserProps.bookmarkFolder) {
+      return
+    }
+
+    this.props.browserProps.bookmarkFolder([this.props.fileKey]);
   }
 
   handleCancelEdit = (event) => {

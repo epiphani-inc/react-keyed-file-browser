@@ -11,7 +11,8 @@ class RawTableFolder extends BaseFolder {
   render() {
     const {
       isOpen, isDragging, isDeleting, isRenaming, isDraft, isOver, isSelected,
-      action, url, browserProps, connectDragPreview, depth, isClass
+      action, url, browserProps, connectDragPreview, depth, isClass, isBookmarked,
+      enableBookmarks
     } = this.props
 
     let iconType;
@@ -112,31 +113,61 @@ class RawTableFolder extends BaseFolder {
           </div>
         </td>
         <td />
-        {cm
+        {isClass
           ? <td className="modified">
-              {localDateFormat(cm)}
+              {typeof cm === 'undefined' ? '-' : localDateFormat(cm)}
             </td>
           : <td />
         }
-        {ce
+        {isClass
           ? <td className="modified">
-              {localDateFormat(ce)}
+              {typeof ce === 'undefined' ? '-' : localDateFormat(ce)}
             </td>
           : <td />
         }
         {(isClass && (browserProps.selection.length <= 1))
           ? <td>
+            { !isBookmarked && (
               <a
                 onClick={this.handleRefreshSubmit}
                 href="#"
+                title="Refresh Entire Class's expiry"
+                style={{textDecoration: "none"}}
                 role="button"
               >
                 {browserProps.icons.Refresh}
+                &nbsp;&nbsp;&nbsp;
               </a>
-              &nbsp;&nbsp;&nbsp;
+            )}
+            {(enableBookmarks) && (
+              isBookmarked ? (
+                <a
+                  onClick={this.handleRemoveBookmark}
+                  href="#"
+                  title="Turn on Class expiry"
+                  style={{textDecoration: "none"}}
+                  role="button"
+                >
+                  {browserProps.icons.Bookmarked}
+                  &nbsp;&nbsp;&nbsp;
+                </a>
+               ) : (
+                <a
+                  onClick={this.handleAddBookmark}
+                  href="#"
+                  title="Turn off Class expiry"
+                  style={{textDecoration: "none"}}
+                  role="button"
+                >
+                  {browserProps.icons.DoBookmark}
+                  &nbsp;&nbsp;&nbsp;
+                </a>
+              )
+            )}
               <a
                 onClick={this.handleViewSubmit}
                 href="#"
+                title="View Class"
                 role="button"
               >
                 {browserProps.icons.View}
@@ -145,6 +176,7 @@ class RawTableFolder extends BaseFolder {
               <a
                 onClick={this.handleTableDeleteClick}
                 href="#"
+                title="Delete Entire Class"
                 role="button"
               >
                 {browserProps.icons.Delete}

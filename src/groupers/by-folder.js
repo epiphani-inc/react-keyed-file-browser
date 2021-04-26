@@ -37,14 +37,26 @@ export default function(files, root) {
     })
   })
 
-  function childIsStudent(childArr) {
+  function setChildValues(childArr, tmpFile) {
+    let isClass = false, isBookmarked = false, enableBookmarks = false;
+
     for (let idx in childArr) {
-      if (childArr[idx].isStudent) {
-        return true;
+      if (!isClass && childArr[idx].isStudent) {
+        isClass = true;
       }
+      if (!isBookmarked && childArr[idx].isBookmarked) {
+        isBookmarked = true;
+      }
+      if (!enableBookmarks && childArr[idx].enableBookmarks) {
+        enableBookmarks = true;
+      }
+
+      if (isClass && isBookmarked && enableBookmarks) break;
     }
 
-    return false;
+    tmpFile['isClass'] = isClass;
+    tmpFile['isBookmarked'] = isBookmarked;
+    tmpFile['enableBookmarks'] = enableBookmarks;
   }
 
   function addAllChildren(level, prefix) {
@@ -63,10 +75,7 @@ export default function(files, root) {
         size: 0,
       }
 
-      if (childIsStudent(tmpFile.children)) {
-        tmpFile['isClass'] = true;
-      }
-
+      setChildValues(tmpFile.children, tmpFile);
       files.push(tmpFile)
     }
     files = files.concat(level.contents)

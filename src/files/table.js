@@ -97,17 +97,47 @@ class RawTableFile extends BaseFile {
         </td>
         {(browserProps.selection.length <= 1) ?
           <td>
-            <a
-              onClick={this.handleRefreshSubmit}
-              href="#"
-              role="button"
-            >
-              {browserProps.icons.Refresh}
-            </a>
-            &nbsp;&nbsp;&nbsp;
+            { (!this.props.isBookmarked && !this.props.isStudent) && (
+              <a
+                onClick={this.handleRefreshSubmit}
+                href="#"
+                title="Refresh Board expiry"
+                style={{textDecoration: "none"}}
+                role="button"
+              >
+                {browserProps.icons.Refresh}
+                &nbsp;&nbsp;&nbsp;
+              </a>
+            )}
+            {(!this.props.isStudent && this.props.enableBookmarks) && (
+              this.props.isBookmarked ? (
+                <a
+                  onClick={this.handleRemoveBookmark}
+                  href="#"
+                  title="Turn on board expiry"
+                  style={{textDecoration: "none"}}
+                  role="button"
+                >
+                  {browserProps.icons.Bookmarked}
+                  &nbsp;&nbsp;&nbsp;
+                </a>
+               ) : (
+                <a
+                  onClick={this.handleAddBookmark}
+                  href="#"
+                  title="Turn off board expiry"
+                  style={{textDecoration: "none"}}
+                  role="button"
+                >
+                  {browserProps.icons.DoBookmark}
+                  &nbsp;&nbsp;&nbsp;
+                </a>
+              )
+            )}
             <a
               onClick={this.handleViewSubmit}
               href="#"
+              title={!this.props.isStudent ? "View Board" : "View Student/Group Board"}
               role="button"
             >
               {browserProps.icons.View}
@@ -116,6 +146,7 @@ class RawTableFile extends BaseFile {
             <a
               onClick={this.handleTableDeleteClick}
               href="#"
+              title={!this.props.isStudent ? "Delete Board" : "Delete Student/Group Board"}
               role="button"
             >
               {browserProps.icons.Delete}
