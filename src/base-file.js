@@ -143,7 +143,7 @@ class BaseFile extends React.Component {
       return
     }
     this.props.browserProps.select(this.props, 'file', null, null)
-    this.props.browserProps.beginAction('delete', this.props)
+    this.props.browserProps.beginAction('delete', [this.props])
   }
 
   handleDeleteClick = (event) => {
