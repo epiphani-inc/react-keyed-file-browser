@@ -568,7 +568,12 @@ class RawFileBrowser extends React.Component {
   select = (key, selectedType, ctrlKey, shiftKey) => {
     const { actionTargets } = this.state
     const shouldClearState = actionTargets.length && !actionTargets.includes(key)
-    const selected = this.getFile(key)
+    var selected 
+    if (typeof (key) === 'object' && key.classSessId === undefined) {
+      selected = this.getFile(key.fileKey)
+    }else{
+      selected = this.getFile(key)
+    }
 
     let newSelection = [key]
     if (ctrlKey || shiftKey) {
@@ -730,6 +735,7 @@ class RawFileBrowser extends React.Component {
       confirmDeletionRenderer: this.props.confirmDeletionRenderer,
       confirmMultipleDeletionRenderer: this.props.confirmMultipleDeletionRenderer,
       icons: this.props.icons,
+      hideOptions: this.props.hideOptions,
 
       // extra config
       columns: this.props.columns,
