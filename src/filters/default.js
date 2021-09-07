@@ -19,6 +19,7 @@ class Filter extends React.Component {
         placeholder="Filter files"
         value={this.props.value}
         onChange={this.handleFilterChange}
+        className={this.props.theme}
       />
     )
   }

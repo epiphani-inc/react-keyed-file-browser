@@ -798,6 +798,7 @@ class RawFileBrowser extends React.Component {
           value={this.state.nameFilter}
           updateFilter={this.updateFilter}
           {...filterRendererProps}
+          theme={this.props.theme}
         />
       )
     }
@@ -1036,7 +1037,7 @@ class RawFileBrowser extends React.Component {
         }
 
         renderedFiles = (
-          <table cellSpacing="0" cellPadding="0">
+          <table className={this.props.theme} cellSpacing="0" cellPadding="0">
             {header}
             <tbody>
               {contents}
