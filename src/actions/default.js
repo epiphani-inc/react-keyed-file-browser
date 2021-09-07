@@ -64,7 +64,7 @@ const Actions = (props) => {
       )
     } else {
       // Do not show add-subfolder for class folders in action menu
-      if (isFolder && !isClass && canCreateFolder && !nameFilter && (!props.browserProps.hideOptions && !props.browserProps.hideOptions.addSubFolder)) {
+      if (isFolder && !isClass && canCreateFolder && !nameFilter && (!props.browserProps.hideOptions || !props.browserProps.hideOptions.addSubFolder)) {
         actions.push(
           <li key="action-add-folder">
             <a
@@ -122,7 +122,7 @@ const Actions = (props) => {
             </a>
           </li>
         )
-      } else if (!itemsWithoutKeyDerived && isFolder && canDeleteFolder && !isClass && (!props.browserProps.hideOptions && !props.browserProps.hideOptions.delete)) {
+      } else if (!itemsWithoutKeyDerived && isFolder && canDeleteFolder && !isClass && (!props.browserProps.hideOptions || !props.browserProps.hideOptions.delete)) {
         // Don't need the multiple item check for regular folders otherwise we cannot
         // delete a single folder. Single class delete button is rendered on the in
         // the table view on each row.
@@ -163,7 +163,7 @@ const Actions = (props) => {
     }
   } else {
     // Nothing selected: We're in the 'root' folder. Only allowed action is adding a folder.
-    if (canCreateFolder && !nameFilter && (!props.browserProps.hideOptions && !props.browserProps.hideOptions.addFolder)) {
+    if (canCreateFolder && !nameFilter && (!props.browserProps.hideOptions || !props.browserProps.hideOptions.addFolder)) {
       actions.push(
         <li key="action-add-folder">
           <a
