@@ -838,16 +838,16 @@ class RawFileBrowser extends React.Component {
     )
 
     return (
-      <div className="action-bar">
-        {filter}
-        {actions}
-        <div>
-          {this.state.activeAction === 'delete' && this.state.selection.length > 1 &&
-            <ConfirmMultipleDeletionRenderer
-              handleDeleteSubmit={this.handleMultipleDeleteSubmit}
-            />}
+        <div className="action-bar">
+          {filter}
+          {actions}
+          <div>
+            {this.state.activeAction === 'delete' && this.state.selection.length > 1 &&
+              <ConfirmMultipleDeletionRenderer
+                handleDeleteSubmit={this.handleMultipleDeleteSubmit}
+              />}
+          </div>
         </div>
-      </div>
     )
   }
 
@@ -1099,9 +1099,11 @@ class RawFileBrowser extends React.Component {
       <div className="rendered-react-keyed-file-browser">
         {this.props.actions}
         <div className="rendered-file-browser" ref={el => { this.browserRef = el }}>
+      <div className={this.props.theme}>
           {this.props.showActionBar && this.renderActionBar(selectedItems)}
           <div className="files">
             {renderedFiles}
+          </div>
           </div>
         </div>
         {this.state.previewFile !== null && (
