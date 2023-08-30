@@ -34,6 +34,7 @@ class BaseFolder extends React.Component {
       moveFolder: PropTypes.func,
       renameFolder: PropTypes.func,
       deleteFolder: PropTypes.func,
+      recording: PropTypes.func
     }),
   }
 
@@ -127,6 +128,13 @@ class BaseFolder extends React.Component {
     }
     this.props.browserProps.select(this.props.fileKey, 'folder', null, null)
     this.props.browserProps.beginAction('delete', [this.props.fileKey])
+  }
+  handleRecording = (event) => {
+    event.stopPropagation()
+    if (!this.props.browserProps.onRecording) {
+      return
+    }
+    this.props.browserProps.onRecording({type: "folder", key: this.props.fileKey})
   }
 
   handleDeleteSubmit = (event) => {

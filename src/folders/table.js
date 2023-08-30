@@ -174,13 +174,22 @@ class RawTableFolder extends BaseFolder {
               </a>
               &nbsp;&nbsp;&nbsp;
               <a
+                onClick={this.handleRecording}
+                href="#"
+                title="View Recording"
+                role="button"
+              >
+                {browserProps.icons.Recording}
+              </a>   
+              &nbsp;&nbsp;&nbsp;
+              <a
                 onClick={this.handleTableDeleteClick}
                 href="#"
                 title="Delete Entire Class"
                 role="button"
               >
                 {browserProps.icons.Delete}
-              </a>
+              </a>           
             </td>
           : <td />
         }

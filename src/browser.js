@@ -236,6 +236,7 @@ class RawFileBrowser extends React.Component {
     onBookmarkRemovedFolder: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     onBookmarkedFile: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     onBookmarkRemovedFile: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+    onRecording: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
 
     onSelect: PropTypes.func,
     onSelectFile: PropTypes.func,
@@ -524,6 +525,15 @@ class RawFileBrowser extends React.Component {
     })
   }
 
+  recording = (keys) => {
+    this.setState({
+      activeAction: null,
+      actionTargets: [],
+    }, () => {
+      this.props.onRecording(keys)
+    })
+  }
+
   downloadFile = (keys) => {
     this.setState({
       activeAction: null,
@@ -773,7 +783,7 @@ class RawFileBrowser extends React.Component {
       bookmarkFolder: this.props.onBookmarkedFolder ? this.onBookmarkedFolder : undefined,
       removeFileBookmark: this.props.onBookmarkRemovedFile ? this.onBookmarkRemovedFile : undefined,
       removeFolderBookmark: this.props.onBookmarkRemovedFolder ? this.onBookmarkRemovedFolder : undefined,
-
+      onRecording: this.props.onRecording ? this.recording : undefined,
       getItemProps: getItemProps,
     }
   }
@@ -786,7 +796,7 @@ class RawFileBrowser extends React.Component {
       actionRenderer: ActionRenderer,
       onCreateFolder, onRenameFile, onRenameFolder,
       onDeleteFile, onDeleteFolder, onDownloadFile,
-      onDownloadFolder,
+      onDownloadFolder, onRecording
     } = this.props
     const browserProps = this.getBrowserProps()
     const selectionIsFolder = (selectedItems.length === 1 && isFolder(selectedItems[0]))
@@ -834,6 +844,7 @@ class RawFileBrowser extends React.Component {
 
         canDownloadFolder={typeof onDownloadFolder === 'function'}
         onDownloadFolder={this.handleActionBarDownloadClick}
+        onRecording={this.handleRecording}
       />
     )
 

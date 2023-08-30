@@ -144,6 +144,15 @@ class RawTableFile extends BaseFile {
             </a>
             &nbsp;&nbsp;&nbsp;
             <a
+                onClick={this.handleRecording}
+                href="#"
+                title="View Recording"
+                role="button"
+              >
+                {browserProps.icons.Recording}
+              </a>   
+              &nbsp;&nbsp;&nbsp;
+            <a
               onClick={this.handleTableDeleteClick}
               href="#"
               title={!this.props.isStudent ? "Delete Board" : "Delete Student/Group Board"}

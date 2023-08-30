@@ -136,7 +136,13 @@ class BaseFile extends React.Component {
     }
     this.props.browserProps.renameFile(this.props, newKey)
   }
-
+  handleRecording = (event) => {
+    event.stopPropagation()
+    if (!this.props.browserProps.onRecording) {
+      return
+    }
+    this.props.browserProps.onRecording({type: "file", key: this.props.id})
+  }
   handleTableDeleteClick = (event) => {
     event.preventDefault()
     if (!this.props.browserProps.deleteFile) {
