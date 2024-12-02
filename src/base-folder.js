@@ -58,9 +58,9 @@ class BaseFolder extends React.Component {
     return this.props.newName || folders[folders.length - 2]
   }
 
-  handleFolderClick = (event) => {
+  handleFolderClick = (event, longPressMode = false) => {
     event.stopPropagation()
-    this.props.browserProps.select(this.props.fileKey, 'folder', event.ctrlKey || event.metaKey, event.shiftKey)
+    this.props.browserProps.select(this.props.fileKey, 'folder', event.ctrlKey || event.metaKey || longPressMode, event.shiftKey)
   }
   handleFolderDoubleClick = (event) => {
     event.stopPropagation()

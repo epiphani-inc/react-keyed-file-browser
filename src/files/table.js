@@ -71,6 +71,12 @@ class RawTableFile extends BaseFile {
       draggable = connectDragPreview(draggable)
     }
 
+    function longpressed() {
+      longPressMode = true
+    }
+
+    let longPressTimer
+    let longPressMode
     const row = (
       <tr
         className={ClassNames('file', {
@@ -79,11 +85,18 @@ class RawTableFile extends BaseFile {
           dragover: isOver,
           selected: isSelected,
         })}
-        onClick={this.handleItemClick}
+        onClick={(e) => { this.handleItemClick(e, longPressMode)}}
         onDoubleClick={this.handleItemDoubleClick}
         draggable={isDraggable ? "true" : "false"}
+        onPointerDown={(e) => { 
+          longPressTimer = window.setTimeout(longpressed, 800)
+        }}
+        onPointerUp={(e) => {
+          clearTimeout(longPressTimer)
+          if(longPressMode && e.pointerType !== 'mouse') this.handleItemClick(e, longPressMode)
+         }}
       >
-        <td className="name">
+        <td className="name"  onClick={this.handleViewSubmit}>
           <div style={{ paddingLeft: (depth * 16) + 'px' }}>
             {draggable}
           </div>

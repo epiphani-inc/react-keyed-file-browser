@@ -16,7 +16,7 @@ class BaseFile extends React.Component {
     connectDropTarget: PropTypes.func,
     isDragging: PropTypes.bool,
     action: PropTypes.string,
-
+    
     browserProps: PropTypes.shape({
       icons: PropTypes.object,
       select: PropTypes.func,
@@ -73,7 +73,7 @@ class BaseFile extends React.Component {
   }
 
   // Handle multiple buttons on the table row.
-  handleItemClick = (event) => {
+  handleItemClick = (event, longPressMode = false) => {
     if (event.target) {
       if (typeof event.target.tagName === "string") {
         if (event.target.tagName === "I") {
@@ -87,7 +87,7 @@ class BaseFile extends React.Component {
       return;
     }
     event.stopPropagation()
-    this.props.browserProps.select(this.props, 'file', event.ctrlKey || event.metaKey, event.shiftKey)
+    this.props.browserProps.select(this.props, 'file', event.ctrlKey || event.metaKey || longPressMode, event.shiftKey)
   }
   handleItemDoubleClick = (event) => {
     event.stopPropagation()

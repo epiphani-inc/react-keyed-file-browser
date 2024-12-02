@@ -295,6 +295,7 @@ class RawFileBrowser extends React.Component {
     selection: [],
     activeAction: null,
     actionTargets: [],
+    longPressMode: false,
 
     nameFilter: '',
     searchResultsShown: SEARCH_RESULTS_PER_PAGE,
@@ -310,6 +311,8 @@ class RawFileBrowser extends React.Component {
     }
 
     window.addEventListener('click', this.handleGlobalClick)
+    //Long press was acting as right click and opening context menu so added below to prevent that
+    window.addEventListener("contextmenu", function(e) { e.preventDefault(); })
   }
 
   componentWillUnmount() {
@@ -503,6 +506,7 @@ class RawFileBrowser extends React.Component {
       activeAction: null,
       actionTargets: [],
       selection: [],
+      longPressMode: false
     }, () => {
       this.props.onDeleteFile(keys)
     })
@@ -514,6 +518,7 @@ class RawFileBrowser extends React.Component {
         activeAction: null,
         actionTargets: [],
         selection: [],
+        longPressMode: false
       }
       if (key in prevState.openFolders) {
         stateChanges.openFolders = { ...prevState.openFolders }
@@ -576,7 +581,7 @@ class RawFileBrowser extends React.Component {
   }
 
   select = (key, selectedType, ctrlKey, shiftKey) => {
-    const { actionTargets } = this.state
+    const { actionTargets, longPressMode } = this.state
     const shouldClearState = actionTargets.length && !actionTargets.includes(key)
     var selected 
     if (typeof (key) === 'object' && key.classSessId === undefined) {
@@ -584,15 +589,21 @@ class RawFileBrowser extends React.Component {
     }else{
       selected = this.getFile(key)
     }
-
     let newSelection = [key]
-    if (ctrlKey || shiftKey) {
-      const indexOfKey = this.state.selection.indexOf(key)
+    if (ctrlKey || shiftKey || longPressMode) {
+      //Updated consition to select/deselct files and folder
+      const indexOfKey = selected?.id ? this.state.selection.findIndex(data => data?.id === selected?.id) : this.state.selection.indexOf(key) 
       if (indexOfKey !== -1) {
         newSelection = [...this.state.selection.slice(0, indexOfKey), ...this.state.selection.slice(indexOfKey + 1)]
       } else {
         newSelection = [...this.state.selection, key]
       }
+    }
+
+    if(ctrlKey) {
+      this.setState({
+        longPressMode: ctrlKey
+      })
     }
 
     this.setState(prevState => ({
@@ -670,6 +681,7 @@ class RawFileBrowser extends React.Component {
         selection: [],
         actionTargets: [],
         activeAction: null,
+        longPressMode: false
       })
     }
   }
@@ -757,7 +769,7 @@ class RawFileBrowser extends React.Component {
       selection: this.state.selection,
       activeAction: this.state.activeAction,
       actionTargets: this.state.actionTargets,
-
+      
       // browser manipulation
       select: this.select,
       openFolder: this.openFolder,

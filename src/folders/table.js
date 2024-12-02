@@ -96,6 +96,12 @@ class RawTableFolder extends BaseFolder {
       draggable = connectDragPreview(draggable)
     }
 
+    function longpressed() {
+      longPressMode = true
+    }
+
+    let longPressTimer
+    let longPressMode
     const folder = (
       <tr
         className={ClassNames('folder', {
@@ -104,8 +110,15 @@ class RawTableFolder extends BaseFolder {
           dragover: isOver,
           selected: isSelected,
         })}
-        onClick={this.handleFolderClick}
+        onClick={(e) => { this.handleFolderClick(e, longPressMode) }}
         onDoubleClick={this.handleFolderDoubleClick}
+        onPointerDown={(e) => { 
+          longPressTimer = window.setTimeout(longpressed, 800)
+        }}
+        onPointerUp={(e) => {
+          clearTimeout(longPressTimer)
+          if(longPressMode && e.pointerType !== 'mouse') this.handleFolderClick(e, longPressMode)
+         }}
       >
         <td className="name">
           <div style={{ paddingLeft: (depth * 16) + 'px' }}>
