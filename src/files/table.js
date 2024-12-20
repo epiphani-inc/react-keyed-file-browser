@@ -32,7 +32,7 @@ class RawTableFile extends BaseFile {
           url={url}
         >
           {icon}
-          {this.getName()}
+          <span onClick={this.handleViewSubmit}>{this.getName()}</span>
         </ConfirmDeletionRenderer>
       )
     } else if (!inAction && isRenaming) {
@@ -57,7 +57,7 @@ class RawTableFile extends BaseFile {
           onClick={this.handleFileClick}
         >
           {icon}
-          {this.getName()}
+          <span onClick={this.handleViewSubmit}>{this.getName()}</span>
         </a>
       )
     }
@@ -96,7 +96,7 @@ class RawTableFile extends BaseFile {
           if(longPressMode && e.pointerType !== 'mouse') this.handleItemClick(e, longPressMode)
          }}
       >
-        <td className="name"  onClick={this.handleViewSubmit}>
+        <td className="name">  
           <div style={{ paddingLeft: (depth * 16) + 'px' }}>
             {draggable}
           </div>
