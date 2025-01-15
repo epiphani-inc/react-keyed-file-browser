@@ -8,6 +8,7 @@ const Actions = (props) => {
     isClass,
     icons,
     nameFilter,
+    longPressMode,
 
     canCreateFolder,
     onCreateFolder,
@@ -29,6 +30,8 @@ const Actions = (props) => {
 
     canDownloadFolder,
     onDownloadFolder,
+
+    onLongpressMode
 
   } = props
 
@@ -194,6 +197,7 @@ Actions.propTypes = {
   isClass: PropTypes.bool,
   icons: PropTypes.object,
   nameFilter: PropTypes.string,
+  longPressMode: PropTypes.bool,
 
   canCreateFolder: PropTypes.bool,
   onCreateFolder: PropTypes.func,
@@ -215,6 +219,8 @@ Actions.propTypes = {
 
   canDownloadFolder: PropTypes.bool,
   onDownloadFolder: PropTypes.func,
+
+  onLongpressMode: PropTypes.func,
 }
 
 Actions.defaultProps = {
@@ -223,6 +229,7 @@ Actions.defaultProps = {
   isClass: false,
   icons: {},
   nameFilter: '',
+  longPressMode: false,
 
   canCreateFolder: false,
   onCreateFolder: null,
@@ -244,6 +251,8 @@ Actions.defaultProps = {
 
   canDownloadFolder: false,
   onDownloadFolder: null,
+
+  onLongpressMode: null,
 }
 
 export default Actions

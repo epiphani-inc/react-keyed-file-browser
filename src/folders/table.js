@@ -96,12 +96,6 @@ class RawTableFolder extends BaseFolder {
       draggable = connectDragPreview(draggable)
     }
 
-    function longpressed() {
-      longPressMode = true
-    }
-
-    let longPressTimer
-    let longPressMode
     const folder = (
       <tr
         className={ClassNames('folder', {
@@ -110,16 +104,14 @@ class RawTableFolder extends BaseFolder {
           dragover: isOver,
           selected: isSelected,
         })}
-        onClick={(e) => { this.handleFolderClick(e, longPressMode) }}
+        onClick={(e) => { this.handleFolderClick(e) }}
         onDoubleClick={this.handleFolderDoubleClick}
-        onPointerDown={(e) => { 
-          longPressTimer = window.setTimeout(longpressed, 800)
-        }}
-        onPointerUp={(e) => {
-          clearTimeout(longPressTimer)
-          if(longPressMode && e.pointerType !== 'mouse') this.handleFolderClick(e, longPressMode)
-         }}
       >
+        <td>
+          <input type={'checkbox'} checked={isSelected} onChange={(e) => {
+            this.handleFolderClick(e, 'folderCheckbox')
+            }}/>
+        </td>
         <td className="name">
           <div style={{ paddingLeft: (depth * 16) + 'px' }}>
             {draggable}

@@ -73,7 +73,7 @@ class BaseFile extends React.Component {
   }
 
   // Handle multiple buttons on the table row.
-  handleItemClick = (event, longPressMode = false) => {
+  handleItemClick = (event) => {
     if (event.target) {
       if (typeof event.target.tagName === "string") {
         if (event.target.tagName === "I") {
@@ -87,7 +87,7 @@ class BaseFile extends React.Component {
       return;
     }
     event.stopPropagation()
-    this.props.browserProps.select(this.props, 'file', event.ctrlKey || event.metaKey || longPressMode, event.shiftKey)
+    this.props.browserProps.select(this.props, 'file', event.ctrlKey || event.metaKey, event.shiftKey)
   }
   handleItemDoubleClick = (event) => {
     event.stopPropagation()
