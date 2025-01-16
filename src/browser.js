@@ -311,8 +311,6 @@ class RawFileBrowser extends React.Component {
     }
 
     window.addEventListener('click', this.handleGlobalClick)
-    //Long press was acting as right click and opening context menu so added below to prevent that
-    window.addEventListener("contextmenu", function(e) { e.preventDefault(); })
   }
 
   componentWillUnmount() {
@@ -401,7 +399,6 @@ class RawFileBrowser extends React.Component {
   }
 
   renameFolder = (oldKey, newKey) => {
-    console.log("renameFolder: oldKey, newKey ", oldKey, newKey)
     this.setState(prevState => {
       const stateChanges = {
         activeAction: null,
@@ -507,7 +504,6 @@ class RawFileBrowser extends React.Component {
       activeAction: null,
       actionTargets: [],
       selection: [],
-      // longPressMode: false
     }, () => {
       this.props.onDeleteFile(keys)
     })
@@ -519,7 +515,6 @@ class RawFileBrowser extends React.Component {
         activeAction: null,
         actionTargets: [],
         selection: [],
-        // longPressMode: false
       }
       if (key in prevState.openFolders) {
         stateChanges.openFolders = { ...prevState.openFolders }
@@ -567,7 +562,6 @@ class RawFileBrowser extends React.Component {
   }
 
   endAction = () => {
-    console.log("End action", this.state.selection)
     if (this.state.selection && this.state.selection.length > 0 && (
       this.state.selection.filter((selection) => {
         if (typeof selection === "string") {
@@ -690,10 +684,6 @@ class RawFileBrowser extends React.Component {
     event.preventDefault()
     this.beginAction('delete', this.state.selection)
   }
-
-  updateLongpressMode = (event) => {
-    event.preventDefault()
-  }
   
   handleActionBarAddFolderClick = (event) => {
     event.preventDefault()
@@ -810,7 +800,7 @@ class RawFileBrowser extends React.Component {
       actionRenderer: ActionRenderer,
       onCreateFolder, onRenameFile, onRenameFolder,
       onDeleteFile, onDeleteFolder, onDownloadFile,
-      onDownloadFolder, onRecording, onLongpressMode
+      onDownloadFolder, onRecording,
     } = this.props
     const browserProps = this.getBrowserProps()
     const selectionIsFolder = (selectedItems.length === 1 && isFolder(selectedItems[0]))
@@ -834,7 +824,6 @@ class RawFileBrowser extends React.Component {
         selectedItems={selectedItems}
         isFolder={selectionIsFolder}
         isClass={isClass}
-        longPressMode={this.state.longPressMode}
 
         icons={icons}
         nameFilter={this.state.nameFilter}
@@ -860,8 +849,6 @@ class RawFileBrowser extends React.Component {
         canDownloadFolder={typeof onDownloadFolder === 'function'}
         onDownloadFolder={this.handleActionBarDownloadClick}
         onRecording={this.handleRecording}
-
-        onLongpressMode={this.updateLongpressMode}
 
       />
     )

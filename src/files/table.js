@@ -79,7 +79,6 @@ class RawTableFile extends BaseFile {
           dragover: isOver,
           selected: isSelected,
         })}
-        // onClick={(e) => { this.handleItemClick(e)}}
         onDoubleClick={this.handleItemDoubleClick}
         draggable={isDraggable ? "true" : "false"}
       >
