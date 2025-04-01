@@ -586,8 +586,9 @@ class RawFileBrowser extends React.Component {
       selected = this.getFile(key)
     }
     let newSelection = [key]
-    if(selectedType === 'folder') newSelection = selection
-    else if (ctrlKey || shiftKey || longPressMode) {
+    // if(selectedType === 'folder') newSelection = selection
+    // else 
+    if (ctrlKey || shiftKey || longPressMode) {
       //Updated consition to select/deselct files and folder
       const indexOfKey = selected?.id ? this.state.selection.findIndex(data => data?.id === selected?.id) : this.state.selection.indexOf(key) 
       if (indexOfKey !== -1) {
@@ -603,7 +604,7 @@ class RawFileBrowser extends React.Component {
       actionTargets: shouldClearState ? [] : actionTargets,
       activeAction: shouldClearState ? null : prevState.activeAction,
     }), () => {
-      if (selectedType === 'file' || selectedType === 'folderCheckbox')this.props.onSelect(selected)
+      this.props.onSelect(selected)
 
       if (selectedType === 'file') this.props.onSelectFile(selected)
       if (selectedType === 'folder') this.props.onSelectFolder(selected)
