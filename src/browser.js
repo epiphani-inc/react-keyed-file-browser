@@ -562,7 +562,6 @@ class RawFileBrowser extends React.Component {
   }
 
   endAction = () => {
-    console.log("Action is ended")
     if (this.state.selection && this.state.selection.length > 0 && (
       this.state.selection.filter((selection) => {
         if (typeof selection === "string") {
@@ -598,6 +597,7 @@ class RawFileBrowser extends React.Component {
         newSelection = [...this.state.selection, key]
       }
     }
+
 
     this.setState(prevState => ({
       selection: newSelection,
