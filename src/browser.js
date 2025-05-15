@@ -363,7 +363,7 @@ class RawFileBrowser extends React.Component {
     this.setState({
       activeAction: null,
       actionTargets: [],
-      selection: [newKey],
+      selection: [],
     }, () => {
       this.props.onMoveFile(oldKey, newKey)
     })
@@ -374,7 +374,7 @@ class RawFileBrowser extends React.Component {
       const stateChanges = {
         activeAction: null,
         actionTargets: [],
-        selection: [newKey],
+        selection: [],
       }
       if (oldKey in prevState.openFolders) {
         stateChanges.openFolders = {
@@ -562,6 +562,7 @@ class RawFileBrowser extends React.Component {
   }
 
   endAction = () => {
+    console.log("Action is ended")
     if (this.state.selection && this.state.selection.length > 0 && (
       this.state.selection.filter((selection) => {
         if (typeof selection === "string") {
@@ -598,7 +599,7 @@ class RawFileBrowser extends React.Component {
       }
     }
 
-
+    console.log("*******************select", newSelection)
     this.setState(prevState => ({
       selection: newSelection,
       actionTargets: shouldClearState ? [] : actionTargets,
