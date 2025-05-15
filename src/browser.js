@@ -599,7 +599,6 @@ class RawFileBrowser extends React.Component {
       }
     }
 
-    console.log("*******************select", newSelection)
     this.setState(prevState => ({
       selection: newSelection,
       actionTargets: shouldClearState ? [] : actionTargets,
