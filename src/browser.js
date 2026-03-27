@@ -295,6 +295,7 @@ class RawFileBrowser extends React.Component {
     selection: [],
     activeAction: null,
     actionTargets: [],
+    longPressMode: true,
 
     nameFilter: '',
     searchResultsShown: SEARCH_RESULTS_PER_PAGE,
@@ -576,7 +577,7 @@ class RawFileBrowser extends React.Component {
   }
 
   select = (key, selectedType, ctrlKey, shiftKey) => {
-    const { actionTargets } = this.state
+    const { actionTargets, longPressMode, selection } = this.state
     const shouldClearState = actionTargets.length && !actionTargets.includes(key)
     var selected 
     if (typeof (key) === 'object' && key.classSessId === undefined) {
@@ -584,16 +585,19 @@ class RawFileBrowser extends React.Component {
     }else{
       selected = this.getFile(key)
     }
-
     let newSelection = [key]
-    if (ctrlKey || shiftKey) {
-      const indexOfKey = this.state.selection.indexOf(key)
+    // if(selectedType === 'folder') newSelection = selection
+    // else 
+    if (ctrlKey || shiftKey || longPressMode) {
+      //Updated consition to select/deselct files and folder
+      const indexOfKey = selected?.id ? this.state.selection.findIndex(data => data?.id === selected?.id) : this.state.selection.indexOf(key) 
       if (indexOfKey !== -1) {
         newSelection = [...this.state.selection.slice(0, indexOfKey), ...this.state.selection.slice(indexOfKey + 1)]
       } else {
         newSelection = [...this.state.selection, key]
       }
     }
+
 
     this.setState(prevState => ({
       selection: newSelection,
@@ -681,6 +685,7 @@ class RawFileBrowser extends React.Component {
     event.preventDefault()
     this.beginAction('delete', this.state.selection)
   }
+  
   handleActionBarAddFolderClick = (event) => {
     event.preventDefault()
     if (this.state.activeAction === 'createFolder') {
@@ -757,7 +762,7 @@ class RawFileBrowser extends React.Component {
       selection: this.state.selection,
       activeAction: this.state.activeAction,
       actionTargets: this.state.actionTargets,
-
+      
       // browser manipulation
       select: this.select,
       openFolder: this.openFolder,
@@ -796,7 +801,7 @@ class RawFileBrowser extends React.Component {
       actionRenderer: ActionRenderer,
       onCreateFolder, onRenameFile, onRenameFolder,
       onDeleteFile, onDeleteFolder, onDownloadFile,
-      onDownloadFolder, onRecording
+      onDownloadFolder, onRecording,
     } = this.props
     const browserProps = this.getBrowserProps()
     const selectionIsFolder = (selectedItems.length === 1 && isFolder(selectedItems[0]))
@@ -845,6 +850,7 @@ class RawFileBrowser extends React.Component {
         canDownloadFolder={typeof onDownloadFolder === 'function'}
         onDownloadFolder={this.handleActionBarDownloadClick}
         onRecording={this.handleRecording}
+
       />
     )
 

@@ -32,7 +32,7 @@ class RawTableFile extends BaseFile {
           url={url}
         >
           {icon}
-          {this.getName()}
+          <span onClick={this.handleViewSubmit}>{this.getName()}</span>
         </ConfirmDeletionRenderer>
       )
     } else if (!inAction && isRenaming) {
@@ -57,7 +57,7 @@ class RawTableFile extends BaseFile {
           onClick={this.handleFileClick}
         >
           {icon}
-          {this.getName()}
+          <span onClick={this.handleViewSubmit}>{this.getName()}</span>
         </a>
       )
     }
@@ -79,11 +79,15 @@ class RawTableFile extends BaseFile {
           dragover: isOver,
           selected: isSelected,
         })}
-        onClick={this.handleItemClick}
         onDoubleClick={this.handleItemDoubleClick}
         draggable={isDraggable ? "true" : "false"}
       >
-        <td className="name">
+        <td>
+          <input type={'checkbox'} checked={isSelected} onChange={(e) => {
+            this.handleItemClick(e)
+            }}/>
+        </td>
+        <td className="name">  
           <div style={{ paddingLeft: (depth * 16) + 'px' }}>
             {draggable}
           </div>

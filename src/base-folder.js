@@ -58,9 +58,13 @@ class BaseFolder extends React.Component {
     return this.props.newName || folders[folders.length - 2]
   }
 
-  handleFolderClick = (event) => {
+  handleFolderClick = (event, type = 'folder') => {
+    if (event.target && event.target.type === "submit") {
+      // Handle delete confirm button
+      return;
+    }
     event.stopPropagation()
-    this.props.browserProps.select(this.props.fileKey, 'folder', event.ctrlKey || event.metaKey, event.shiftKey)
+    this.props.browserProps.select(this.props.fileKey, type, event.ctrlKey || event.metaKey, event.shiftKey)
   }
   handleFolderDoubleClick = (event) => {
     event.stopPropagation()

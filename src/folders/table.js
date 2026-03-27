@@ -104,9 +104,14 @@ class RawTableFolder extends BaseFolder {
           dragover: isOver,
           selected: isSelected,
         })}
-        onClick={this.handleFolderClick}
+        onClick={(e) => { this.handleFolderClick(e) }}
         onDoubleClick={this.handleFolderDoubleClick}
       >
+        <td>
+          <input type={'checkbox'} checked={isSelected} onChange={(e) => {
+            this.handleFolderClick(e, 'folderCheckbox')
+            }}/>
+        </td>
         <td className="name">
           <div style={{ paddingLeft: (depth * 16) + 'px' }}>
             {draggable}
