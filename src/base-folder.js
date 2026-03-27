@@ -187,7 +187,9 @@ class BaseFolder extends React.Component {
     this.props.browserProps.endAction()
   }
 
-  toggleFolder = () => {
+  toggleFolder = (event) => {
+    //To avoid selection folder/class folder on open/close actions
+    event.stopPropagation()
     this.props.browserProps.toggleFolder(this.props.fileKey)
   }
 
